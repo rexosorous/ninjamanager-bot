@@ -1,7 +1,6 @@
 import requests
 import os
 import json
-import logging
 from random import uniform
 from time import sleep
 
@@ -29,6 +28,9 @@ WORLD_MISSION_URL = 'https://www.ninjamanager.com/world/area/anbu-hideout/missio
 class OutOfEnergy(Exception):
     pass
 
+class MaxChallenges(Exception):
+    pass
+
 
 
 
@@ -39,6 +41,8 @@ class NMBot():
 
         self.arena_energy = True
         self.world_energy = True
+
+        self.team_blacklist = set()
 
         self.arena_successes = 0
         self.arena_losses = 0
@@ -61,6 +65,9 @@ class NMBot():
         try:
             while True:
                 self.check_energy()
+
+                if loop_count % 5 == 0:
+                    self.team_blacklist = set()
 
                 if arena_energy or world_energy:
                     self.log('LOOP #' + loop_count + '\n')
@@ -128,7 +135,9 @@ class NMBot():
         with open('response.txt', 'r') as file:
             for line in file:
                 if '-icon-challenge-return' in line:
-                    challengers.add(line[line.find('data-teamid="')+13 : line.find('">')])
+                    team_id = line[line.find('data-teamid="')+13 : line.find('">')]
+                    if team_id not in self.team_blacklist:
+                        challengers.add(team_id)
 
         os.remove('response.txt')
         return challengers
@@ -137,10 +146,14 @@ class NMBot():
 
     def challenge(team_id: str):
         # challenges a team
-        response = self.session.post('http://www.ninjamanager.com/ajax/challengeTeam', headers=HEADERS, cookies=COOKIES, data={'TeamID': team_id,'SkipBattle': 'true'})
+        response = self.session.post('http://www.ninjamanager.com/ajax/challengeTeam', headers=HEADERS, cookies=COOKIES, data={'TeamID': team_id, 'SkipBattle': 'true'})
 
         if 'Not enough energy!' in response.text:
             raise OutOfEnergy
+
+        if 'You have reached your max amount of recent challenges' in response.text:
+            self.team_blacklist.add(team_id)
+            raise MaxChallenges
 
         info = json.load(response.text)
 
