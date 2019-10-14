@@ -51,9 +51,9 @@ class NMBot():
     def execute(self):
         # main logic
         loop_count = 0
-        sleep(2, 4)
+        sleep(rng(2, 4))
         self.bot.refresh()
-        sleep(2.5, 6)
+        sleep(rng(2.5, 6))
 
         try:
             while True:
@@ -72,25 +72,26 @@ class NMBot():
                     if self.world_energy:
                         self.world_actions()
                         self.log('\n')
-                        sleep(rng(300, 600)) # 5 to 10 minutes
                     else:
                         self.log('WORLD out of energy')
 
                     self.log('\n\n\n\n\n\n')
                     loop_count += 1
-                else:
-                    sleep(rng(1200, 1800)) # 20 to 30 minutes
+
+                sleep(rng(1200, 1800)) # 20 to 30 minutes
+
+
         except Exception as e:
             self.log('\n\n\n\n\n\n')
             self.log('%s' % e)
             self.log(traceback.format_exc())
             self.logger.close()
             with open('summary.txt', 'w+') as file:
-                file.write('Total Loops:  ' + str(loop_count) + '\n' +
+                file.write('Total Loops:   ' + str(loop_count) +
                          '\nArena Battles: ' + str(self.arena_battles) +
-                         '\nWorld Wins:   ' + str(self.world_successes) +
-                         '\nWorld Losses: ' + str(self.world_losses) +
-                         '\nItems Gained: ' + str(self.item_successes))
+                         '\nWorld Wins:    ' + str(self.world_successes) +
+                         '\nWorld Losses:  ' + str(self.world_losses) +
+                         '\nItems Gained:  ' + str(self.item_successes))
 
 
 
@@ -205,6 +206,8 @@ class NMBot():
 
         self.log('Arena Energy = ' + arena_nrg)
         self.log('World Energy = ' + world_nrg)
+
+        sleep(rng(20, 30))
 
 
 
