@@ -1,4 +1,5 @@
-import requests
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 import os
 import json
 import traceback
@@ -7,16 +8,9 @@ from time import sleep
 
 
 # TO DO
-# MIGREATE TO SELENIUM
+# add assert statements ot insure we are on the right page
 # gold gain from world grinding
 # legendary weapon grinding
-
-
-
-
-
-WORLD_MISSION_URL = 'https://www.ninjamanager.com/world/area/anbu-hideout/mission/6'
-
 
 
 # EXCEPTIONS
@@ -32,19 +26,18 @@ class MaxChallenges(Exception):
 
 class NMBot():
     def __init__(self, headers, cookies):
-        self.session = requests.Session()
+        self.bot = webdriver.Chrome()
+        self.bot.get('https://www.ninjamanager.com')
 
-        self.headers = headers
-        self.cookies = cookies
+        for ck in cookies:
+            self.bot.add_cookie(ck)
 
         self.arena_energy = True
         self.world_energy = True
 
         self.team_blacklist = {'965'} # 965 = my own team
 
-        self.arena_successes = 0
-        self.arena_losses = 0
-
+        self.arena_battles = 0
         self.world_successes = 0
         self.world_losses = 0
         self.item_successes = 0
@@ -56,25 +49,25 @@ class NMBot():
 
 
     def execute(self):
-        # maion logic
+        # main logic
         loop_count = 0
+        sleep(2, 4)
+        self.bot.refresh()
+        sleep(2.5, 6)
 
         try:
             while True:
                 self.check_energy()
 
-                if loop_count % 5 == 0:
-                    self.team_blacklist = {'965'}
-
                 if self.arena_energy or self.world_energy:
                     self.log('LOOP #' + str(loop_count) + '\n')
 
-                    # if self.arena_energy:
-                    #     self.arena_actions()
-                    #     self.log('\n')
-                    #     sleep(rng(300, 600)) # 5 to 10 minutes
-                    # else:
-                    #     self.log('ARENA out of energy' + '\n')
+                    if self.arena_energy:
+                        self.arena_actions()
+                        self.log('\n')
+                        sleep(rng(300, 600)) # 5 to 10 minutes
+                    else:
+                        self.log('ARENA out of energy' + '\n')
 
                     if self.world_energy:
                         self.world_actions()
@@ -83,7 +76,7 @@ class NMBot():
                     else:
                         self.log('WORLD out of energy')
 
-                    self.log('\n\n\n')
+                    self.log('\n\n\n\n\n\n')
                     loop_count += 1
                 else:
                     sleep(rng(1200, 1800)) # 20 to 30 minutes
@@ -94,8 +87,7 @@ class NMBot():
             self.logger.close()
             with open('summary.txt', 'w+') as file:
                 file.write('Total Loops:  ' + str(loop_count) + '\n' +
-                         '\nArena Wins:   ' + str(self.arena_successes) +
-                         '\nArena Losses: ' + str(self.arena_losses) +
+                         '\nArena Battles: ' + str(self.arena_battles) +
                          '\nWorld Wins:   ' + str(self.world_successes) +
                          '\nWorld Losses: ' + str(self.world_losses) +
                          '\nItems Gained: ' + str(self.item_successes))
@@ -108,59 +100,36 @@ class NMBot():
     def arena_actions(self):
         # all the things we want to do in the arena screen
         try:
-            challengers = self.get_challengers()
-            for team in challengers:
-                sleep(rng(1, 3))
-                self.challenge(team)
-        except FileNotFoundError:
-            self.log('ERROR READING FROM response.txt')
+            self.goto("arena")
+            self.challenge()
         except OutOfEnergy:
-            self.log('OUT OF ARENA ENERGY')
+            self.log('RAN OUT OF ARENA ENERGY')
+            self.goto()
 
 
 
-    def get_challengers(self) -> {str}:
-        # gets a list of rematch challengers
-        raw = self.session.get('https://www.ninjamanager.com/arena', headers=self.headers, cookies=self.cookies)
-        challengers = set()
+    def challenge(self):
+        # rematches every team possible
+        challengers = self.bot.find_elements_by_class_name('-icon-challenge-return')
+        rematch = []
+        for ch in challengers:
+            team = ch.get_attribute('data-teamid')
+            if team in rematch or team in self.team_blacklist:
+                continue
+            sleep(rng(1, 5)) # 1 to 5 seconds
+            ch.click()
 
-        with open('response.txt', 'w+', encoding='utf-8') as file:
-            file.write(raw.text)
+            # check if we ran out of energy
+            try:
+                self.bot.find_element_by_tag_name('Not enough energy!') # this element only appears if out of energy in which case a NoSuchElementException is raised
+                print('THIS A TEST MESSAGE')
+                raise OutofEnergy
+            except NoSuchElementException:
+                pass
 
-        with open('response.txt', 'r') as file:
-            for line in file:
-                if '-icon-challenge-return' in line:
-                    team_id = line[line.find('data-teamid="')+13 : line.find('">')]
-                    if team_id not in self.team_blacklist:
-                        challengers.add(team_id)
-
-        os.remove('response.txt')
-        return challengers
-
-
-
-    def challenge(self, team_id: str):
-        # challenges a team
-        response = self.session.post('https://www.ninjamanager.com/ajax/challengeTeam', headers=self.headers, cookies=self.cookies, data={'TeamID': team_id, 'SkipBattle': 'true'})
-
-        if 'Not enough energy!' in response.text:
-            raise OutOfEnergy
-
-        if 'You have reached your max amount of recent challenges' in response.text:
-            self.team_blacklist.add(team_id)
-            raise MaxChallenges
-
-        with open('arena_debug.txt', 'w+') as file:
-            file.write(response.text)
-
-        info = response.json()
-
-        if '-result-win' in info['challengeBox']:
-            self.arena_successes += 1
-            self.log('won  against team ' + team_id)
-        elif '-result-loss' in info['challengeBox']:
-            self.arena_losses += 1
-            self.log('lost against team ' + team_id)
+            self.arena_battles += 1
+            self.log('challenged team #' + team)
+            rematch.append(team)
 
 
 
@@ -170,36 +139,46 @@ class NMBot():
     def world_actions(self):
         # all the things we want to do in the world screen
         try:
-            info = self.do_mission(WORLD_MISSION_URL)
+            self.do_mission()
         except OutOfEnergy:
-            self.log('OUT OF WORLD ENERGY')
+            self.log('RAN OUT OF WORLD ENERGY')
 
 
 
-    def do_mission(self, url: str):
+    def do_mission(self):
         # executes world mission
-        response = self.session.get(url, headers=self.headers, cookies=self.cookies)
+        # MUST BE MANUALLY EDITED BY HAND
 
-        if 'Not enough world energy!' in response.text:
-            raise OutOfEnergy
+        area_url = 'https://www.ninjamanager.com/world/area/anbu-hideout'
+        mission_id = '199'
+        data_url = '/world/area/anbu-hideout/mission/6'
 
-        with open('world_debug.txt', 'w+') as file:
-            file.write(response.text)
+        self.bot.get(area_url)
+        sleep(rng(3, 6))
+        mission = self.bot.find_element_by_xpath('//div[@data-missionid="' + mission_id + '"]')
+        sleep(rng(1, 3))
+        mission.find_element_by_xpath('./div[@class="c-mission-box__details"]/div[@class="c-mission-box__requirements"]/div[@class="c-mission-box__cost"]/div[@data-url="' + data_url + '"]').click() # fight button
+        sleep(rng(4, 10))
+        self.bot.find_element_by_class_name('pm-battle-buttons__skip').click() # skip button
+        sleep(rng(5, 7))
 
-        info = response.json()
-
-        if r'pm-battle-matchup__title\">Defeat<\/div>' in info['content']:
+        # check if we won or lost the mission
+        if self.bot.find_element_by_class_name('pm-battle-matchup__title').text == 'Victory':
             self.world_successes += 1
             self.log('world won')
-        elif r'pm-battle-matchup__title\">Victory<\/div>' in info['content']:
+        elif self.bot.find_element_by_class_name('pm-battle-matchup__title').text == 'Defeat':
             self.world_losses += 1
             self.log('world lost')
 
-        if ['mission']['Material']['Rolls'][0]['Roll']['Success']:
+        # check if we got the item
+        try:
+            self.bot.find_element_by_class_name('-status-done')
+            self.log('ITEM GET')
             self.item_successes += 1
-            self.log('Item Get')
-        else:
-            self.log('No Item')
+        except NoSuchElementException:
+            self.log('no item')
+
+        self.bot.find_element_by_class_name('pm-battle-buttons__finish').click() # finish button
 
 
 
@@ -208,24 +187,34 @@ class NMBot():
     # GENERAL
     def check_energy(self):
         # checks how much energy we have
-        response = self.session.get('https://www.ninjamanager.com', headers=self.headers, cookies=self.cookies)
-        raw = response.text
+        self.goto('myteam')
 
-        arena_energy_raw = raw[raw.find('js-header-energy-arena'):]
-        world_energy_raw = raw[raw.find('js-header-energy-world'):]
+        arena_bar = self.bot.find_element_by_class_name('header-team__bar-ae')
+        arena_nrg = arena_bar.find_element_by_xpath('./div[@class="c-bar__text"]/span').text
 
-        arena_energy_value = int(arena_energy_raw[arena_energy_raw.find('cur">')+5 : arena_energy_raw.find('</span>')])
-        world_energy_value = int(world_energy_raw[world_energy_raw.find('cur">')+5 : world_energy_raw.find('</span>')])
+        world_bar = self.bot.find_element_by_class_name('header-team__bar-we')
+        world_nrg = world_bar.find_element_by_xpath('./div[@class="c-bar__text"]/span').text
 
-        if arena_energy_value < 4:
+        self.arena_energy = True
+        if int(arena_nrg) < 4:
             self.arena_energy = False
-        else:
-            self.arena_energy = True
 
-        if world_energy_value < 7:
+        self.world_energy = True
+        if int(world_nrg) < 7:
             self.world_energy = False
-        else:
-            self.world_energy = True
+
+        self.log('Arena Energy = ' + arena_nrg)
+        self.log('World Energy = ' + world_nrg)
+
+
+
+    def goto(self, area: str):
+        # navigates to a part of the website
+        class_name = "-tab-" + area
+        arena_button = self.bot.find_element_by_class_name(class_name)
+        sleep(rng(0.5, 2))
+        arena_button.click()
+        sleep(rng(2, 8))
 
 
 
@@ -244,17 +233,6 @@ def rng(start: float, stop:float) -> float:
 
 
 
-# def save_and_load(text):
-#     # saves and the immediately loads a json file because json.load() is funny
-#     with open('response.json', 'w+', encoding='utf-8') as file:
-#         file.write(text)
-
-#     with open('response.json', 'r', encoding='utf-8') as file:
-#         info = json.load(file)
-
-#     return info
-
-
 
 if __name__ == "__main__":
     with open('headers.json', 'r') as file:
@@ -263,5 +241,5 @@ if __name__ == "__main__":
     with open('cookies.json', 'r') as file:
         cookies = json.load(file)
 
-    bot = NMBot(headers, cookies)
-    bot.execute()
+    NMBot = NMBot(headers, cookies)
+    NMBot.execute()
