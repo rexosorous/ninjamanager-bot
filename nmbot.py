@@ -101,11 +101,11 @@ class NMBot():
     def arena_actions(self):
         # all the things we want to do in the arena screen
         try:
-            self.goto("arena")
+            self.goto('arena')
             self.challenge()
         except OutOfEnergy:
             self.log('RAN OUT OF ARENA ENERGY')
-            self.goto()
+            self.goto('home')
 
 
 
@@ -119,12 +119,12 @@ class NMBot():
                 continue
             sleep(rng(1, 5)) # 1 to 5 seconds
             ch.click()
+            sleep(rng(3, 5))
 
             # check if we ran out of energy
             try:
-                self.bot.find_element_by_tag_name('Not enough energy!') # this element only appears if out of energy in which case a NoSuchElementException is raised
-                print('THIS A TEST MESSAGE')
-                raise OutofEnergy
+                self.bot.find_element_by_class_name('c-overlay-message__text') # this element only appears if out of energy in which case a NoSuchElementException is raised
+                raise OutOfEnergy
             except NoSuchElementException:
                 pass
 
