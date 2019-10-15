@@ -65,7 +65,7 @@ class NMBot():
                     if self.arena_energy:
                         self.arena_actions()
                         self.log('\n')
-                        sleep(rng(300, 600)) # 5 to 10 minutes
+                        sleep(rng(900, 1200)) # 15 to 20 minutes
                     else:
                         self.log('ARENA out of energy' + '\n')
 
@@ -78,7 +78,7 @@ class NMBot():
                     self.log('\n\n\n\n\n\n')
                     loop_count += 1
 
-                sleep(rng(1200, 1800)) # 20 to 30 minutes
+                sleep(rng(900, 1200)) # 15 to 20 minutes
 
 
         except Exception as e:
@@ -105,7 +105,7 @@ class NMBot():
             self.challenge()
         except OutOfEnergy:
             self.log('RAN OUT OF ARENA ENERGY')
-            self.goto('home')
+            self.bot.get('https://www.ninjamanager.com')
 
 
 
