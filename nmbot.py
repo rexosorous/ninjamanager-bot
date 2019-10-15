@@ -35,6 +35,11 @@ class NMBot():
             os.remove('log.txt')
         self.logger = open('log.txt', 'a+')
 
+        self.log('starting chromedriver.exe ...')
+        chromedriver_thread = threading.Thread(target=chromedriver_start)
+        chromedriver_thread.daemon = True
+        chromedriver_thread.start()
+
         self.log('starting bot ...')
         options = webdriver.chrome.options.Options()
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
@@ -63,14 +68,14 @@ class NMBot():
 
     def execute(self):
         # main logic
-        sleep(rng(2, 4))
-        self.bot.refresh()
-        assert "Home" in self.bot.title, 'LOGIN FAILED'
-        self.log('login successful')
-        sleep(rng(4, 8))
-
-        self.log('starting main loop ...')
         try:
+            sleep(rng(2, 4))
+            self.bot.refresh()
+            sleep(rng(4, 8))
+            assert "Home" in self.bot.title, 'LOGIN FAILED'
+            self.log('login successful')
+            self.log('starting main loop ...')
+
             while True:
                 self.check_energy()
 
@@ -79,14 +84,13 @@ class NMBot():
 
                     if self.arena_energy:
                         self.arena_actions()
-                        self.log('\n')
+                        self.log('')
                         sleep(rng(900, 1200)) # 15 to 20 minutes
                     else:
-                        self.log('ARENA out of energy' + '\n')
+                        self.log('ARENA out of energy\n')
 
                     if self.world_energy:
                         self.world_actions()
-                        self.log('\n')
                     else:
                         self.log('WORLD out of energy')
 
@@ -256,6 +260,11 @@ class NMBot():
 
 
 
+
+
+def chromedriver_start():
+    os.system('chromedriver.exe')
+    sleep(4)
 
 
 
