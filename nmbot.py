@@ -10,7 +10,7 @@ from time import sleep
 
 
 # TO DO
-# add assert statements ot insure we are on the right page
+# add assert statements to insure we are on the right page
 # gold gain from world grinding
 # legendary weapon grinding
 
@@ -31,41 +31,51 @@ class NormalExit(Exception):
 
 class NMBot():
     def __init__(self, headers, cookies):
-        self.bot = webdriver.Chrome()
+        if os.path.exists('log.txt'): # don't append to the last log
+            os.remove('log.txt')
+        self.logger = open('log.txt', 'a+')
+
+        self.log('starting bot ...')
+        options = webdriver.chrome.options.Options()
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
+        self.bot = webdriver.Chrome(options=options)
+
+        self.log('navigating to ninjamanager.com ...')
         self.bot.get('https://www.ninjamanager.com')
 
+        self.log('logging in via cookies ...')
         for ck in cookies:
             self.bot.add_cookie(ck)
+
 
         self.arena_energy = True
         self.world_energy = True
 
         self.team_blacklist = {'965'} # 965 = my own team
 
+        self.loop_count = 0
         self.arena_battles = 0
         self.world_successes = 0
         self.world_losses = 0
         self.item_successes = 0
 
-        if os.path.exists('log.txt'): # don't append to the last log
-            os.remove('log.txt')
-        self.logger = open('log.txt', 'a+')
-
 
 
     def execute(self):
         # main logic
-        loop_count = 0
         sleep(rng(2, 4))
         self.bot.refresh()
-        sleep(rng(2.5, 6))
+        assert "Home" in self.bot.title, 'LOGIN FAILED'
+        self.log('login successful')
+        sleep(rng(4, 8))
 
+        self.log('starting main loop ...')
         try:
             while True:
                 self.check_energy()
 
                 if self.arena_energy or self.world_energy:
-                    self.log('LOOP #' + str(loop_count) + '\n')
+                    self.log('LOOP #' + str(self.loop_count) + '\n')
 
                     if self.arena_energy:
                         self.arena_actions()
@@ -81,7 +91,7 @@ class NMBot():
                         self.log('WORLD out of energy')
 
                     self.log('\n\n\n\n\n\n')
-                    loop_count += 1
+                    self.loop_count += 1
 
                 sleep(rng(900, 1200)) # 15 to 20 minutes
         except Exception as e:
@@ -229,7 +239,7 @@ class NMBot():
         # actions to do before the program dies
         self.logger.close()
         with open('summary.txt', 'w+') as file:
-            file.write('Total Loops:   ' + str(loop_count) +
+            file.write('Total Loops:   ' + str(self.loop_count) +
                      '\nArena Battles: ' + str(self.arena_battles) +
                      '\nWorld Wins:    ' + str(self.world_successes) +
                      '\nWorld Losses:  ' + str(self.world_losses) +
@@ -240,9 +250,9 @@ class NMBot():
     def kill(self):
         # kills the main loop from inside the object to make sure a summary is made
         self.log('\n\n\n\n\n\n')
-        self.log('program exiting normally...')
+        self.log('program exiting normally ...')
         self.on_exit()
-        raise NormalExit
+        os._exit(1)
 
 
 
@@ -262,11 +272,12 @@ if __name__ == "__main__":
     with open('cookies.json', 'r') as file:
         cookies = json.load(file)
 
-    keyboard.add_hotkey('delete', os._exit, args=[1])
+    manager = NMBot(headers, cookies)
+
+    keyboard.add_hotkey('delete', manager.kill)
 
     kill_thread = threading.Thread(target=keyboard.wait)
     kill_thread.daemon = True
     kill_thread.start()
 
-    manager = NMBot(headers, cookies)
     manager.execute()
