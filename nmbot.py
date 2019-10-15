@@ -3,6 +3,8 @@ from selenium.common.exceptions import NoSuchElementException
 import os
 import json
 import traceback
+import keyboard
+import threading
 from random import uniform
 from time import sleep
 
@@ -18,6 +20,9 @@ class OutOfEnergy(Exception):
     pass
 
 class MaxChallenges(Exception):
+    pass
+
+class NormalExit(Exception):
     pass
 
 
@@ -79,19 +84,11 @@ class NMBot():
                     loop_count += 1
 
                 sleep(rng(900, 1200)) # 15 to 20 minutes
-
-
         except Exception as e:
             self.log('\n\n\n\n\n\n')
             self.log('%s' % e)
             self.log(traceback.format_exc())
-            self.logger.close()
-            with open('summary.txt', 'w+') as file:
-                file.write('Total Loops:   ' + str(loop_count) +
-                         '\nArena Battles: ' + str(self.arena_battles) +
-                         '\nWorld Wins:    ' + str(self.world_successes) +
-                         '\nWorld Losses:  ' + str(self.world_losses) +
-                         '\nItems Gained:  ' + str(self.item_successes))
+            self.on_exit()
 
 
 
@@ -228,12 +225,33 @@ class NMBot():
 
 
 
+    def on_exit(self):
+        # actions to do before the program dies
+        self.logger.close()
+        with open('summary.txt', 'w+') as file:
+            file.write('Total Loops:   ' + str(loop_count) +
+                     '\nArena Battles: ' + str(self.arena_battles) +
+                     '\nWorld Wins:    ' + str(self.world_successes) +
+                     '\nWorld Losses:  ' + str(self.world_losses) +
+                     '\nItems Gained:  ' + str(self.item_successes))
+
+
+
+    def kill(self):
+        # kills the main loop from inside the object to make sure a summary is made
+        self.log('\n\n\n\n\n\n')
+        self.log('program exiting normally...')
+        self.on_exit()
+        raise NormalExit
+
+
+
+
 
 
 def rng(start: float, stop:float) -> float:
     # returns a random float between start and stop
     return uniform(start, stop)
-
 
 
 
@@ -244,5 +262,11 @@ if __name__ == "__main__":
     with open('cookies.json', 'r') as file:
         cookies = json.load(file)
 
-    NMBot = NMBot(headers, cookies)
-    NMBot.execute()
+    keyboard.add_hotkey('delete', os._exit, args=[1])
+
+    kill_thread = threading.Thread(target=keyboard.wait)
+    kill_thread.daemon = True
+    kill_thread.start()
+
+    manager = NMBot(headers, cookies)
+    manager.execute()
