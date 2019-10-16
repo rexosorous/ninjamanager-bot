@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import ElementClickInterceptedException
 import os
 import json
 import traceback
@@ -10,7 +11,10 @@ from time import sleep
 
 
 # TO DO
-# add assert statements to insure we are on the right page
+# handle element not clickable error
+#       either exception handling OR
+#       using actions
+#           actions.move_to_element(element).click().perform()
 # gold gain from world grinding
 # legendary weapon grinding
 
@@ -75,6 +79,7 @@ class NMBot():
             assert "Home" in self.bot.title, 'LOGIN FAILED'
             self.log('login successful')
             self.log('starting main loop ...')
+            self.log('\n\n\n')
 
             while True:
                 self.check_energy()
@@ -125,23 +130,26 @@ class NMBot():
         challengers = self.bot.find_elements_by_class_name('-icon-challenge-return')
         rematch = []
         for ch in challengers:
-            team = ch.get_attribute('data-teamid')
-            if team in rematch or team in self.team_blacklist:
-                continue
-            sleep(rng(1, 5)) # 1 to 5 seconds
-            ch.click()
-            sleep(rng(3, 5))
-
-            # check if we ran out of energy
             try:
-                self.bot.find_element_by_class_name('c-overlay-message__text') # this element only appears if out of energy in which case a NoSuchElementException is raised
-                raise OutOfEnergy
-            except NoSuchElementException:
-                pass
+                team = ch.get_attribute('data-teamid')
+                if team in rematch or team in self.team_blacklist:
+                    continue
+                sleep(rng(1, 5)) # 1 to 5 seconds
+                ch.click()
+                sleep(rng(3, 5))
 
-            self.arena_battles += 1
-            self.log('challenged team #' + team)
-            rematch.append(team)
+                # check if we ran out of energy
+                try:
+                    self.bot.find_element_by_class_name('c-overlay-message__text') # this element only appears if out of energy in which case a NoSuchElementException is raised
+                    raise OutOfEnergy
+                except NoSuchElementException:
+                    pass
+
+                self.arena_battles += 1
+                self.log('challenged team #' + team)
+                rematch.append(team)
+            except ElementClickInterceptedException:
+                self.log('could not challenge team #' + team + '. could not click.')
 
 
 
