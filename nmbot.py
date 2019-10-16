@@ -90,7 +90,7 @@ class NMBot():
                     if self.arena_energy:
                         self.arena_actions()
                         self.log('')
-                        sleep(rng(900, 1200)) # 15 to 20 minutes
+                        sleep(rng(600, 900)) # 10 to 15 minutes
                     else:
                         self.log('ARENA out of energy\n')
 
@@ -102,7 +102,7 @@ class NMBot():
                     self.log('\n\n\n\n\n\n')
                     self.loop_count += 1
 
-                sleep(rng(900, 1200)) # 15 to 20 minutes
+                sleep(rng(600, 900)) # 10 to 15 minutes
         except Exception as e:
             self.log('\n\n\n\n\n\n')
             self.log('%s' % e)
