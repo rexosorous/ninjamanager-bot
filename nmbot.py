@@ -1,50 +1,27 @@
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import ElementClickInterceptedException
-import os
-import json
 import traceback
-import keyboard
-import threading
+import os
 from random import uniform
 from time import sleep
 
+import logger
+import exceptions as *
+
 
 # TO DO
-# handle element not clickable error
-#       either exception handling OR
-#       using actions
-#           actions.move_to_element(element).click().perform()
 # gold gain from world grinding
 # legendary weapon grinding
-
-
-# EXCEPTIONS
-class OutOfEnergy(Exception):
-    pass
-
-class MaxChallenges(Exception):
-    pass
-
-class NormalExit(Exception):
-    pass
-
 
 
 
 
 class NMBot():
     def __init__(self, headers, cookies, logger):
-        if os.path.exists('log.txt'): # don't append to the last log
-            os.remove('log.txt')
         self.logger = logger
 
-        self.logger.log('starting chromedriver.exe ...')
-        chromedriver_thread = threading.Thread(target=chromedriver_start)
-        chromedriver_thread.daemon = True
-        chromedriver_thread.start()
-        sleep(5)
-
+        self.start_chromedriver()
         self.logger.log('starting bot ...')
         options = webdriver.chrome.options.Options()
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
@@ -73,9 +50,9 @@ class NMBot():
 
     def execute(self):
         # main logic
-        sleep(rng(2, 4))
+        self.slp(2, 4)
         self.bot.refresh()
-        sleep(rng(4, 8))
+        self.slp(4, 8)
         assert "Home" in self.bot.title, 'LOGIN FAILED'
         self.logger.log('login successful')
         self.logger.log('starting main loop ...')
@@ -90,7 +67,7 @@ class NMBot():
                 if self.arena_energy:
                     self.arena_actions()
                     self.logger.log('')
-                    sleep(rng(900, 1080)) # 15 to 18 minutes
+                    self.slp(900, 1080) # 15 to 18 minutes
                 else:
                     self.logger.log('ARENA out of energy\n')
 
@@ -102,7 +79,7 @@ class NMBot():
                 self.logger.log('\n\n\n\n\n\n')
                 self.loop_count += 1
 
-            sleep(rng(900, 1080)) # 15 to 18 minutes
+            self.slp(900, 1080) # 15 to 18 minutes
 
 
 
@@ -129,9 +106,9 @@ class NMBot():
                 team = ch.get_attribute('data-teamid')
                 if team in rematch or team in self.team_blacklist:
                     continue
-                sleep(rng(1, 5)) # 1 to 5 seconds
+                self.slp(1, 5) # 1 to 5 seconds
                 ch.click()
-                sleep(rng(3, 5))
+                self.slp(3, 5)
 
                 # check if we ran out of energy
                 try:
@@ -169,13 +146,13 @@ class NMBot():
         data_url = '/world/area/anbu-hideout/mission/6'
 
         self.bot.get(area_url)
-        sleep(rng(3, 6))
+        self.slp(3, 6)
         mission = self.bot.find_element_by_xpath('//div[@data-missionid="' + mission_id + '"]')
-        sleep(rng(1, 3))
+        self.slp(1, 3)
         mission.find_element_by_xpath('./div[@class="c-mission-box__details"]/div[@class="c-mission-box__requirements"]/div[@class="c-mission-box__cost"]/div[@data-url="' + data_url + '"]').click() # fight button
-        sleep(rng(4, 10))
+        self.slp(4, 10)
         self.bot.find_element_by_class_name('pm-battle-buttons__skip').click() # skip button
-        sleep(rng(5, 7))
+        self.slp(5, 7)
 
         # check if we won or lost the mission
         if self.bot.find_element_by_class_name('pm-battle-matchup__title').text == 'Victory':
@@ -200,6 +177,21 @@ class NMBot():
 
 
     # GENERAL
+    def start_chromedriver(self):
+        # starts chromedriver
+        self.logger.log('starting chromedriver.exe ...')
+        chromedriver_thread = threading.Thread(target=os.system, args=['chromedriver'])
+        chromedriver_thread.daemon = True
+        chromedriver_thread.start()
+        self.slp(5, 5)
+
+
+    def slp(self, min: float, max: float):
+        # sleeps for a random amount of time between min and max
+        sleep(uniform(min, max))
+
+
+
     def check_energy(self):
         # checks how much energy we have
         self.goto('myteam')
@@ -221,7 +213,7 @@ class NMBot():
         self.logger.log('Arena Energy = ' + arena_nrg)
         self.logger.log('World Energy = ' + world_nrg)
 
-        sleep(rng(20, 30))
+        self.slp(20, 30)
 
 
 
@@ -229,16 +221,9 @@ class NMBot():
         # navigates to a part of the website
         class_name = "-tab-" + area
         arena_button = self.bot.find_element_by_class_name(class_name)
-        sleep(rng(0.5, 2))
+        self.slp(0.5, 2)
         arena_button.click()
-        sleep(rng(2, 8))
-
-
-
-    def log(self, msg: str):
-        # prints to console and file
-        print(msg)
-        self.logger.write('\n' + msg)
+        self.slp(2, 8)
 
 
 
@@ -259,58 +244,3 @@ class NMBot():
         self.logger.log('program exiting normally ...')
         self.on_exit()
         os._exit(1)
-
-
-
-
-
-def chromedriver_start():
-    os.system('chromedriver.exe')
-    sleep(4)
-
-
-
-def rng(start: float, stop:float) -> float:
-    # returns a random float between start and stop
-    return uniform(start, stop)
-
-
-
-class Logger():
-    self.logger = open('log.txt', 'a+')
-
-    def log(msg: str):
-        # prints to console and log.txt
-        print(msg)
-        self.logger.write(msg)
-
-    def close():
-        # gracefully closes connection
-        self.logger.close()
-
-
-
-if __name__ == "__main__":
-    with open('headers.json', 'r') as file:
-        headers = json.load(file)
-
-    with open('cookies.json', 'r') as file:
-        cookies = json.load(file)
-
-    logger = Logger()
-    manager = NMBot(headers, cookies, logger)
-
-    keyboard.add_hotkey('delete', manager.kill)
-
-    kill_thread = threading.Thread(target=keyboard.wait)
-    kill_thread.daemon = True
-    kill_thread.start()
-
-    try:
-        manager.execute()
-    except Exception as e:
-        logger.log('\n\n\n\n\n\n')
-        logger.log('%s' % e)
-        logger.log(traceback.format_exc())
-
-    logger.close()
