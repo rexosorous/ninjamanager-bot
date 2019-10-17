@@ -1,10 +1,9 @@
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import ElementClickInterceptedException
-import traceback
-import os
+from selenium.common import exceptions as *
 from random import uniform
 from time import sleep
+import threading
+import os
 
 import logger
 import exceptions as *
@@ -218,11 +217,3 @@ class NMBot():
         self.slp(0.5, 2)
         arena_button.click()
         self.slp(2, 8)
-
-
-
-    def kill(self):
-        # kills the main loop from inside the object to make sure a summary is made
-        self.logger.log('\n\n\n\n\n\n')
-        self.logger.log('program exiting normally ...')
-        os._exit(1)
