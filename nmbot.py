@@ -18,7 +18,8 @@ import exceptions as *
 
 
 class NMBot():
-    def __init__(self, headers, cookies, logger):
+    def __init__(self, headers, cookies, stats, logger):
+        self.stats = stats
         self.logger = logger
 
         self.start_chromedriver()
@@ -34,17 +35,10 @@ class NMBot():
         for ck in cookies:
             self.bot.add_cookie(ck)
 
-
         self.arena_energy = True
         self.world_energy = True
 
         self.team_blacklist = {'965'} # 965 = my own team
-
-        self.loop_count = 0
-        self.arena_battles = 0
-        self.world_successes = 0
-        self.world_losses = 0
-        self.item_successes = 0
 
 
 
@@ -62,7 +56,7 @@ class NMBot():
             self.check_energy()
 
             if self.arena_energy or self.world_energy:
-                self.logger.log('LOOP #' + str(self.loop_count) + '\n')
+                self.logger.log('LOOP #' + str(self.stats['loop_count']) + '\n')
 
                 if self.arena_energy:
                     self.arena_actions()
@@ -77,7 +71,7 @@ class NMBot():
                     self.logger.log('WORLD out of energy')
 
                 self.logger.log('\n\n\n\n\n\n')
-                self.loop_count += 1
+                self.self['loop_count'] += 1
 
             self.slp(900, 1080) # 15 to 18 minutes
 
@@ -117,7 +111,7 @@ class NMBot():
                 except NoSuchElementException:
                     pass
 
-                self.arena_battles += 1
+                self.stats['arena_battles'] += 1
                 self.logger.log('challenged team #' + team)
                 rematch.append(team)
             except ElementClickInterceptedException:
@@ -156,17 +150,17 @@ class NMBot():
 
         # check if we won or lost the mission
         if self.bot.find_element_by_class_name('pm-battle-matchup__title').text == 'Victory':
-            self.world_successes += 1
+            self.stats['world_successes'] += 1
             self.logger.log('world won')
         elif self.bot.find_element_by_class_name('pm-battle-matchup__title').text == 'Defeat':
-            self.world_losses += 1
+            self.stats['world_losses'] += 1
             self.logger.log('world lost')
 
         # check if we got the item
         try:
             self.bot.find_element_by_class_name('-status-done')
             self.logger.log('ITEM GET')
-            self.item_successes += 1
+            self.stats['item_successes'] += 1
         except NoSuchElementException:
             self.logger.log('no item')
 
@@ -227,20 +221,8 @@ class NMBot():
 
 
 
-    def on_exit(self):
-        # actions to do before the program dies
-        with open('summary.txt', 'w+') as file:
-            file.write('Total Loops:   ' + str(self.loop_count) +
-                     '\nArena Battles: ' + str(self.arena_battles) +
-                     '\nWorld Wins:    ' + str(self.world_successes) +
-                     '\nWorld Losses:  ' + str(self.world_losses) +
-                     '\nItems Gained:  ' + str(self.item_successes))
-
-
-
     def kill(self):
         # kills the main loop from inside the object to make sure a summary is made
         self.logger.log('\n\n\n\n\n\n')
         self.logger.log('program exiting normally ...')
-        self.on_exit()
         os._exit(1)

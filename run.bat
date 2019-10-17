@@ -1,3 +1,3 @@
 @echo off
-python nmbot.py
+python app.py
 PAUSE
