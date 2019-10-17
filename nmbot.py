@@ -34,25 +34,26 @@ class NormalExit(Exception):
 
 
 class NMBot():
-    def __init__(self, headers, cookies):
+    def __init__(self, headers, cookies, logger):
         if os.path.exists('log.txt'): # don't append to the last log
             os.remove('log.txt')
-        self.logger = open('log.txt', 'a+')
+        self.logger = logger
 
-        self.log('starting chromedriver.exe ...')
+        self.logger.log('starting chromedriver.exe ...')
         chromedriver_thread = threading.Thread(target=chromedriver_start)
         chromedriver_thread.daemon = True
         chromedriver_thread.start()
+        sleep(5)
 
-        self.log('starting bot ...')
+        self.logger.log('starting bot ...')
         options = webdriver.chrome.options.Options()
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
         self.bot = webdriver.Chrome(options=options)
 
-        self.log('navigating to ninjamanager.com ...')
+        self.logger.log('navigating to ninjamanager.com ...')
         self.bot.get('https://www.ninjamanager.com')
 
-        self.log('logging in via cookies ...')
+        self.logger.log('logging in via cookies ...')
         for ck in cookies:
             self.bot.add_cookie(ck)
 
@@ -72,42 +73,36 @@ class NMBot():
 
     def execute(self):
         # main logic
-        try:
-            sleep(rng(2, 4))
-            self.bot.refresh()
-            sleep(rng(4, 8))
-            assert "Home" in self.bot.title, 'LOGIN FAILED'
-            self.log('login successful')
-            self.log('starting main loop ...')
-            self.log('\n\n\n')
+        sleep(rng(2, 4))
+        self.bot.refresh()
+        sleep(rng(4, 8))
+        assert "Home" in self.bot.title, 'LOGIN FAILED'
+        self.logger.log('login successful')
+        self.logger.log('starting main loop ...')
+        self.logger.log('\n\n\n')
 
-            while True:
-                self.check_energy()
+        while True:
+            self.check_energy()
 
-                if self.arena_energy or self.world_energy:
-                    self.log('LOOP #' + str(self.loop_count) + '\n')
+            if self.arena_energy or self.world_energy:
+                self.logger.log('LOOP #' + str(self.loop_count) + '\n')
 
-                    if self.arena_energy:
-                        self.arena_actions()
-                        self.log('')
-                        sleep(rng(600, 900)) # 10 to 15 minutes
-                    else:
-                        self.log('ARENA out of energy\n')
+                if self.arena_energy:
+                    self.arena_actions()
+                    self.logger.log('')
+                    sleep(rng(900, 1080)) # 15 to 18 minutes
+                else:
+                    self.logger.log('ARENA out of energy\n')
 
-                    if self.world_energy:
-                        self.world_actions()
-                    else:
-                        self.log('WORLD out of energy')
+                if self.world_energy:
+                    self.world_actions()
+                else:
+                    self.logger.log('WORLD out of energy')
 
-                    self.log('\n\n\n\n\n\n')
-                    self.loop_count += 1
+                self.logger.log('\n\n\n\n\n\n')
+                self.loop_count += 1
 
-                sleep(rng(600, 900)) # 10 to 15 minutes
-        except Exception as e:
-            self.log('\n\n\n\n\n\n')
-            self.log('%s' % e)
-            self.log(traceback.format_exc())
-            self.on_exit()
+            sleep(rng(900, 1080)) # 15 to 18 minutes
 
 
 
@@ -120,7 +115,7 @@ class NMBot():
             self.goto('arena')
             self.challenge()
         except OutOfEnergy:
-            self.log('RAN OUT OF ARENA ENERGY')
+            self.logger.log('RAN OUT OF ARENA ENERGY')
             self.bot.get('https://www.ninjamanager.com')
 
 
@@ -146,10 +141,10 @@ class NMBot():
                     pass
 
                 self.arena_battles += 1
-                self.log('challenged team #' + team)
+                self.logger.log('challenged team #' + team)
                 rematch.append(team)
             except ElementClickInterceptedException:
-                self.log('could not challenge team #' + team + '. could not click.')
+                self.logger.log('could not challenge team #' + team + '. could not click.')
 
 
 
@@ -161,7 +156,7 @@ class NMBot():
         try:
             self.do_mission()
         except OutOfEnergy:
-            self.log('RAN OUT OF WORLD ENERGY')
+            self.logger.log('RAN OUT OF WORLD ENERGY')
 
 
 
@@ -185,18 +180,18 @@ class NMBot():
         # check if we won or lost the mission
         if self.bot.find_element_by_class_name('pm-battle-matchup__title').text == 'Victory':
             self.world_successes += 1
-            self.log('world won')
+            self.logger.log('world won')
         elif self.bot.find_element_by_class_name('pm-battle-matchup__title').text == 'Defeat':
             self.world_losses += 1
-            self.log('world lost')
+            self.logger.log('world lost')
 
         # check if we got the item
         try:
             self.bot.find_element_by_class_name('-status-done')
-            self.log('ITEM GET')
+            self.logger.log('ITEM GET')
             self.item_successes += 1
         except NoSuchElementException:
-            self.log('no item')
+            self.logger.log('no item')
 
         self.bot.find_element_by_class_name('pm-battle-buttons__finish').click() # finish button
 
@@ -223,8 +218,8 @@ class NMBot():
         if int(world_nrg) < 7:
             self.world_energy = False
 
-        self.log('Arena Energy = ' + arena_nrg)
-        self.log('World Energy = ' + world_nrg)
+        self.logger.log('Arena Energy = ' + arena_nrg)
+        self.logger.log('World Energy = ' + world_nrg)
 
         sleep(rng(20, 30))
 
@@ -249,7 +244,6 @@ class NMBot():
 
     def on_exit(self):
         # actions to do before the program dies
-        self.logger.close()
         with open('summary.txt', 'w+') as file:
             file.write('Total Loops:   ' + str(self.loop_count) +
                      '\nArena Battles: ' + str(self.arena_battles) +
@@ -261,8 +255,8 @@ class NMBot():
 
     def kill(self):
         # kills the main loop from inside the object to make sure a summary is made
-        self.log('\n\n\n\n\n\n')
-        self.log('program exiting normally ...')
+        self.logger.log('\n\n\n\n\n\n')
+        self.logger.log('program exiting normally ...')
         self.on_exit()
         os._exit(1)
 
@@ -282,6 +276,20 @@ def rng(start: float, stop:float) -> float:
 
 
 
+class Logger():
+    self.logger = open('log.txt', 'a+')
+
+    def log(msg: str):
+        # prints to console and log.txt
+        print(msg)
+        self.logger.write(msg)
+
+    def close():
+        # gracefully closes connection
+        self.logger.close()
+
+
+
 if __name__ == "__main__":
     with open('headers.json', 'r') as file:
         headers = json.load(file)
@@ -289,7 +297,8 @@ if __name__ == "__main__":
     with open('cookies.json', 'r') as file:
         cookies = json.load(file)
 
-    manager = NMBot(headers, cookies)
+    logger = Logger()
+    manager = NMBot(headers, cookies, logger)
 
     keyboard.add_hotkey('delete', manager.kill)
 
@@ -297,4 +306,11 @@ if __name__ == "__main__":
     kill_thread.daemon = True
     kill_thread.start()
 
-    manager.execute()
+    try:
+        manager.execute()
+    except Exception as e:
+        logger.log('\n\n\n\n\n\n')
+        logger.log('%s' % e)
+        logger.log(traceback.format_exc())
+
+    logger.close()
