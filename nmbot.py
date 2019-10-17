@@ -1,12 +1,12 @@
 from selenium import webdriver
-from selenium.common import exceptions as *
+from selenium.common.exceptions import *
 from random import uniform
 from time import sleep
 import threading
 import os
 
 import logger
-import exceptions as *
+from exceptions import *
 
 
 # TO DO
@@ -70,7 +70,7 @@ class NMBot():
                     self.logger.log('WORLD out of energy')
 
                 self.logger.log('\n\n\n\n\n\n')
-                self.self['loop_count'] += 1
+                self.stats['loop_count'] += 1
 
             self.slp(900, 1080) # 15 to 18 minutes
 
@@ -177,6 +177,7 @@ class NMBot():
         chromedriver_thread.daemon = True
         chromedriver_thread.start()
         self.slp(5, 5)
+
 
 
     def slp(self, min: float, max: float):
