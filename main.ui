@@ -110,6 +110,10 @@
   <property name="windowTitle">
    <string>Main Window</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>icon.ico</normaloff>icon.ico</iconset>
+  </property>
   <property name="autoFillBackground">
    <bool>true</bool>
   </property>
