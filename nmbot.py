@@ -238,4 +238,4 @@ class NMBot():
     def stop(self):
         # closes the browser
         self.logger.log('\n\n\nclosing bot')
-        self.bot.close()
+        self.bot.quit()

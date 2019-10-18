@@ -1,5 +1,6 @@
 from functools import partial
 from PyQt5 import QtWidgets
+from PyQt5 import QtGui
 from sys import exit
 import traceback
 import threading
@@ -36,6 +37,7 @@ class GUI():
         }
 
         self.connect_buttons()
+        self.ui_changes()
         self.window.show()
         exit(self.app.exec_())
 
@@ -52,13 +54,10 @@ class GUI():
 
 
 
-    def setup_threads(self):
-        self.threads = {
-            'chrome_thread': threading.Thread(target=self.browsers['chrome'].execute),
-            'firefox_thread': threading.Thread(target=self.browsers['firefox'].execute)
-        }
-        self.threads['chrome_thread'].daemon = True
-        self.threads['firefox_thread'].daemon = True
+    def ui_changes(self):
+        # additional changes to the ui
+        self.gui.chrome_log.ensureCursorVisible()
+        self.gui.firefox_log.ensureCursorVisible()
 
 
 

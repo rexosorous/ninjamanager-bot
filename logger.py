@@ -1,5 +1,5 @@
 import os
-from PyQt5.QtWidgets import QTextBrowser
+from PyQt5.QtGui import QTextCursor
 
 class Logger():
     def __init__(self, browser: str, gui_log):
@@ -11,8 +11,9 @@ class Logger():
 
     def log(self, msg: str):
         # prints to console and log.txt
-        self.gui_log.append(msg)
         self.logger.write(msg + '\n')
+        self.gui_log.append(msg)
+        self.gui_log.moveCursor(QTextCursor.End)
 
     def close(self):
         # gracefully closes connection
