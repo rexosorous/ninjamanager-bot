@@ -1,0 +1,3 @@
+@echo off
+pyinstaller -y -F -w -i "C:/Users/J-Zach Loke/Good Stuff/programming/ninjamanager-bot/icon.ico" --add-data "C:/Users/J-Zach Loke/Good Stuff/programming/ninjamanager-bot/exceptions.py";"." --add-data "C:/Users/J-Zach Loke/Good Stuff/programming/ninjamanager-bot/logger.py";"." --add-data "C:/Users/J-Zach Loke/Good Stuff/programming/ninjamanager-bot/main_ui.py";"." --add-data "C:/Users/J-Zach Loke/Good Stuff/programming/ninjamanager-bot/nmbot.py";"." -n ninjamanager-bot -p C:\Windows\System32\downlevel  "C:/Users/J-Zach Loke/Good Stuff/programming/ninjamanager-bot/app.py"
+pause
