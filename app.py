@@ -21,7 +21,7 @@ import nmbot
 
 
 class GUI():
-    def __init__(self, stats):
+    def __init__(self, loggers, stats):
         self.app = QtWidgets.QApplication([])
         self.window = QtWidgets.QMainWindow()
         self.gui = main_ui.Ui_main_window()
@@ -31,10 +31,7 @@ class GUI():
         self.accounts = self.get_accounts()
         self.cookies = self.get_cookies()
         self.stats = stats
-        self.loggers = {
-            'chrome': logger.Logger('chrome', self.gui.chrome_log),
-            'firefox': logger.Logger('firefox', self.gui.firefox_log)
-        }
+        self.loggers = loggers
 
         self.connect_buttons()
         self.ui_changes()
@@ -132,6 +129,12 @@ class GUI():
 
 
 if __name__ == "__main__":
+    loggers = {
+        'chrome': logger.Logger('chrome', self.gui.chrome_log),
+        'firefox': logger.Logger('firefox', self.gui.firefox_log)
+    }
+
+
     stats = {
         'chrome': {
             'loop_count': 0,
@@ -149,9 +152,13 @@ if __name__ == "__main__":
         }
     }
 
+
     try:
-        gui = GUI(stats)
+        gui = GUI(loggers, stats)
     finally:
+        for logger in loggers:
+            logger.close()
+
         if os.path.exists('json_txt/summary.txt'):
             os.remove('json_txt/summary.txt')
         with open('json_txt/summary.txt', 'a+') as file:
