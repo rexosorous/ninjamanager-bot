@@ -32,8 +32,8 @@ class GUI():
         self.cookies = self.get_cookies()
         self.stats = stats
         self.loggers = loggers
-        self.loggers['chrome'] = self.gui.chrome_log
-        self.loggers['firefox'] = self.gui.firefox_log
+        self.loggers['chrome'] = logger.Logger('chrome', self.gui.chrome_log)
+        self.loggers['firefox'] = logger.Logger('firefox', self.gui.firefox_log)
 
         self.connect_buttons()
         self.ui_changes()
@@ -132,8 +132,8 @@ class GUI():
 
 if __name__ == "__main__":
     loggers = {
-        'chrome': logger.Logger('chrome', None),
-        'firefox': logger.Logger('firefox', None)
+        'chrome': None,
+        'firefox': None
     }
 
 
