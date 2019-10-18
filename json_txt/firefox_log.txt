@@ -1,0 +1,23 @@
+starting bot ...
+navigating to ninjamanager.com ...
+loggin in ...
+login successful
+all checks successful
+starting main loop ...
+
+
+
+
+Arena Energy = 14
+World Energy = 97
+LOOP #0
+
+challenged team #135
+challenged team #3277
+challenged team #2577
+RAN OUT OF ARENA ENERGY
+
+
+
+
+closing bot

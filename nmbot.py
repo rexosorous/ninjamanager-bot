@@ -20,9 +20,9 @@ class NMBot():
         self.logger.log('starting bot ...')
 
         if browser == 'chrome':
-            self.bot = webdriver.Chrome(executable_path=r'C:\Users\J-Zach Loke\Good Stuff\programming\ninjamanager-bot\drivers\chromedriver.exe')
+            self.bot = webdriver.Chrome(executable_path=r'drivers\chromedriver.exe')
         elif browser == 'firefox':
-            self.bot = webdriver.Firefox(executable_path=r'C:\Users\J-Zach Loke\Good Stuff\programming\ninjamanager-bot\drivers\geckodriver.exe')
+            self.bot = webdriver.Firefox(executable_path=r'drivers\geckodriver.exe')
 
         self.logger.log('navigating to ninjamanager.com ...')
         self.bot.get('https://www.ninjamanager.com')
