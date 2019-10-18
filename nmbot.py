@@ -3,76 +3,80 @@ from selenium.common.exceptions import *
 from random import uniform
 from time import sleep
 import threading
-import os
+import traceback
+import json
 
 import logger
 from exceptions import *
 
 
-# TO DO
-# gold gain from world grinding
-# legendary weapon grinding
-
-
-
 
 class NMBot():
-    def __init__(self, headers, cookies, stats, logger):
+    def __init__(self, account, cookie, stats, logger, browser: str):
         self.stats = stats
         self.logger = logger
 
-        self.start_chromedriver()
+        self.load_mission(browser)
         self.logger.log('starting bot ...')
-        options = webdriver.chrome.options.Options()
-        options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        self.bot = webdriver.Chrome(options=options)
+
+        if browser == 'chrome':
+            self.bot = webdriver.Chrome(executable_path=r'C:\Users\J-Zach Loke\Good Stuff\programming\ninjamanager-bot\drivers\chromedriver.exe')
+        elif browser == 'firefox':
+            self.bot = webdriver.Firefox(executable_path=r'C:\Users\J-Zach Loke\Good Stuff\programming\ninjamanager-bot\drivers\geckodriver.exe')
 
         self.logger.log('navigating to ninjamanager.com ...')
         self.bot.get('https://www.ninjamanager.com')
 
-        self.logger.log('logging in via cookies ...')
-        for ck in cookies:
-            self.bot.add_cookie(ck)
+        self.login(account)
+        self.logger.log('all checks successful')
+        self.bot.add_cookie(cookie)
 
         self.arena_energy = True
         self.world_energy = True
 
-        self.team_blacklist = {'965'} # 965 = my own team
+        self.team_blacklist = {'953','965'} # my teams
 
 
 
     def execute(self):
-        # main logic
-        self.slp(2, 4)
-        self.bot.refresh()
-        self.slp(4, 8)
-        assert "Home" in self.bot.title, 'LOGIN FAILED'
-        self.logger.log('login successful')
-        self.logger.log('starting main loop ...')
-        self.logger.log('\n\n\n')
+        # makes a thread for the main loop
+        self.loop_thread = threading.Thread(target=self.main_loop)
+        self.loop_thread.daemon = True
+        self.loop_thread.start()
 
-        while True:
-            self.check_energy()
 
-            if self.arena_energy or self.world_energy:
-                self.logger.log('LOOP #' + str(self.stats['loop_count']) + '\n')
 
-                if self.arena_energy:
-                    self.arena_actions()
-                    self.logger.log('')
-                    self.slp(900, 1080) # 15 to 18 minutes
-                else:
-                    self.logger.log('ARENA out of energy\n')
+    def main_loop(self):
+        try:
+            self.logger.log('starting main loop ...')
+            self.logger.log('\n\n\n')
 
-                if self.world_energy:
-                    self.world_actions()
-                else:
-                    self.logger.log('WORLD out of energy')
+            while True:
+                self.check_energy()
 
-                self.logger.log('\n\n\n\n\n\n')
-                self.stats['loop_count'] += 1
+                if self.arena_energy or self.world_energy:
+                    self.logger.log('LOOP #' + str(self.stats['loop_count']) + '\n')
 
-            self.slp(900, 1080) # 15 to 18 minutes
+                    if self.arena_energy:
+                        self.arena_actions()
+                        self.logger.log('')
+                        self.slp(900, 1080) # 15 to 18 minutes
+                    else:
+                        self.logger.log('ARENA out of energy\n')
+
+                    if self.world_energy:
+                        self.world_actions()
+                    else:
+                        self.logger.log('WORLD out of energy')
+
+                    self.logger.log('\n\n\n\n\n\n')
+                    self.stats['loop_count'] += 1
+
+                self.slp(900, 1080) # 15 to 18 minutes
+        except Exception as e:
+            self.logger.log('\n\n\n\n\n\n')
+            self.logger.log('%s' % e)
+            self.logger.log(traceback.format_exc())
 
 
 
@@ -134,15 +138,9 @@ class NMBot():
         # executes world mission
         # MUST BE MANUALLY EDITED BY HAND
 
-        area_url = 'https://www.ninjamanager.com/world/area/anbu-hideout'
-        mission_id = '199'
-        data_url = '/world/area/anbu-hideout/mission/6'
-
-        self.bot.get(area_url)
+        self.bot.get(self.area_url)
         self.slp(3, 6)
-        mission = self.bot.find_element_by_xpath('//div[@data-missionid="' + mission_id + '"]')
-        self.slp(1, 3)
-        mission.find_element_by_xpath('./div[@class="c-mission-box__details"]/div[@class="c-mission-box__requirements"]/div[@class="c-mission-box__cost"]/div[@data-url="' + data_url + '"]').click() # fight button
+        self.bot.find_element_by_xpath('//div[@data-url="' + self.area_url[self.area_url.find('/world'):] + '/mission/' + self.mission_num + '"]').click() # fight button
         self.slp(4, 10)
         self.bot.find_element_by_class_name('pm-battle-buttons__skip').click() # skip button
         self.slp(5, 7)
@@ -170,13 +168,29 @@ class NMBot():
 
 
     # GENERAL
-    def start_chromedriver(self):
-        # starts chromedriver
-        self.logger.log('starting chromedriver.exe ...')
-        chromedriver_thread = threading.Thread(target=os.system, args=['chromedriver'])
-        chromedriver_thread.daemon = True
-        chromedriver_thread.start()
-        self.slp(5, 5)
+    def login(self, account):
+        self.logger.log('loggin in ...')
+        self.bot.find_element_by_class_name('header-inside__account-login').click()
+        self.slp(3, 6)
+        self.bot.find_element_by_id('input-login').send_keys(account['username'])
+        self.slp(2, 5)
+        self.bot.find_element_by_id('input-password').send_keys(account['password'])
+        self.slp(2, 5)
+        self.bot.find_element_by_id('login-nm-button').click()
+        self.slp(10, 15)
+
+        assert "Home" in self.bot.title, 'LOGIN FAILED'
+        self.logger.log('login successful')
+
+
+
+    def load_mission(self, browser: str):
+        # updates mission data from json file
+        with open('json_txt/world.json', 'r') as file:
+            data = json.load(file)
+
+        self.area_url = data[browser]['area_url']
+        self.mission_num = data[browser]['mission_num']
 
 
 
@@ -218,3 +232,10 @@ class NMBot():
         self.slp(0.5, 2)
         arena_button.click()
         self.slp(2, 8)
+
+
+
+    def stop(self):
+        # closes the browser
+        self.logger.log('\n\n\nclosing bot')
+        self.bot.close()

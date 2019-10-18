@@ -1,0 +1,223 @@
+starting bot ...
+navigating to ninjamanager.com ...
+loggin in ...
+login successful
+all checks successful
+starting main loop ...
+
+
+
+
+Arena Energy = 36
+World Energy = 96
+LOOP #0
+
+challenged team #124
+challenged team #45
+challenged team #142
+challenged team #10270
+challenged team #135
+challenged team #21
+challenged team #20
+challenged team #9502
+challenged team #3277
+
+world won
+no item
+
+
+
+
+
+
+
+Arena Energy = 4
+World Energy = 94
+LOOP #1
+
+challenged team #142
+RAN OUT OF ARENA ENERGY
+
+world won
+no item
+
+
+
+
+
+
+
+Arena Energy = 3
+World Energy = 93
+LOOP #2
+
+ARENA out of energy
+
+world won
+no item
+
+
+
+
+
+
+
+Arena Energy = 5
+World Energy = 89
+LOOP #3
+
+challenged team #10270
+RAN OUT OF ARENA ENERGY
+
+world won
+no item
+
+
+
+
+
+
+
+Arena Energy = 4
+World Energy = 88
+LOOP #4
+
+challenged team #11096
+RAN OUT OF ARENA ENERGY
+
+world won
+ITEM GET
+
+
+
+
+
+
+
+Arena Energy = 4
+World Energy = 86
+LOOP #5
+
+challenged team #11096
+RAN OUT OF ARENA ENERGY
+
+world won
+no item
+
+
+
+
+
+
+
+Arena Energy = 3
+World Energy = 85
+LOOP #6
+
+ARENA out of energy
+
+world won
+no item
+
+
+
+
+
+
+
+Arena Energy = 5
+World Energy = 81
+LOOP #7
+
+challenged team #1234
+RAN OUT OF ARENA ENERGY
+
+world won
+ITEM GET
+
+
+
+
+
+
+
+Arena Energy = 4
+World Energy = 80
+LOOP #8
+
+challenged team #198
+RAN OUT OF ARENA ENERGY
+
+world won
+no item
+
+
+
+
+
+
+
+Arena Energy = 4
+World Energy = 78
+LOOP #9
+
+challenged team #4427
+RAN OUT OF ARENA ENERGY
+
+world won
+no item
+
+
+
+
+
+
+
+Arena Energy = 3
+World Energy = 77
+LOOP #10
+
+ARENA out of energy
+
+world won
+ITEM GET
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Message: element click intercepted: Element <a class="top-menu__item -tab-myteam   " href="/myteam" data-page="myteam">...</a> is not clickable at point (598, 165). Other element would receive the click: <div class="pm-battle__summary pm-battle__cover js-battle-summary -c-active">...</div>
+  (Session info: chrome=77.0.3865.120)
+
+Traceback (most recent call last):
+  File "C:\Users\J-Zach Loke\Good Stuff\programming\ninjamanager-bot\nmbot.py", line 55, in main_loop
+    self.check_energy()
+  File "C:\Users\J-Zach Loke\Good Stuff\programming\ninjamanager-bot\nmbot.py", line 205, in check_energy
+    self.goto('myteam')
+  File "C:\Users\J-Zach Loke\Good Stuff\programming\ninjamanager-bot\nmbot.py", line 233, in goto
+    arena_button.click()
+  File "C:\Users\J-Zach Loke\AppData\Local\Programs\Python\Python37\lib\site-packages\selenium\webdriver\remote\webelement.py", line 80, in click
+    self._execute(Command.CLICK_ELEMENT)
+  File "C:\Users\J-Zach Loke\AppData\Local\Programs\Python\Python37\lib\site-packages\selenium\webdriver\remote\webelement.py", line 633, in _execute
+    return self._parent.execute(command, params)
+  File "C:\Users\J-Zach Loke\AppData\Local\Programs\Python\Python37\lib\site-packages\selenium\webdriver\remote\webdriver.py", line 321, in execute
+    self.error_handler.check_response(response)
+  File "C:\Users\J-Zach Loke\AppData\Local\Programs\Python\Python37\lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 242, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.ElementClickInterceptedException: Message: element click intercepted: Element <a class="top-menu__item -tab-myteam   " href="/myteam" data-page="myteam">...</a> is not clickable at point (598, 165). Other element would receive the click: <div class="pm-battle__summary pm-battle__cover js-battle-summary -c-active">...</div>
+  (Session info: chrome=77.0.3865.120)
+
+
+
+
+
+closing bot
