@@ -1,19 +1,21 @@
+from PyQt5 import QtCore
 import os
-from PyQt5.QtGui import QTextCursor
 
-class Logger():
-    def __init__(self, browser: str, gui_log):
+class Logger(QtCore.QObject):
+    log_signal = QtCore.pyqtSignal(str, str) # this has to be here for some reason
+
+    def __init__(self, browser: str):
+        super().__init__()
         if os.path.exists('json_txt/' + browser + '_log.txt'): # don't append to the last log
             os.remove('json_txt/' + browser + '_log.txt')
 
-        self.gui_log = gui_log
+        self.browser = browser
         self.logger = open('json_txt/' + browser + '_log.txt', 'a+')
 
     def log(self, msg: str):
-        # prints to console and log.txt
+        # prints to gui log and log.txt
         self.logger.write(msg + '\n')
-        self.gui_log.append(msg)
-        self.gui_log.moveCursor(QTextCursor.End)
+        self.log_signal.emit(self.browser, msg)
 
     def close(self):
         # gracefully closes connection

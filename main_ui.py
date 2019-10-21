@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.0
+# Created by: PyQt5 UI code generator 5.13.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,8 +13,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_main_window(object):
     def setupUi(self, main_window):
         main_window.setObjectName("main_window")
-        main_window.resize(1280, 720)
-        main_window.setMinimumSize(QtCore.QSize(1280, 720))
+        main_window.resize(700, 450)
+        main_window.setMinimumSize(QtCore.QSize(700, 450))
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -141,6 +141,7 @@ class Ui_main_window(object):
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.SpanningRole, self.chrome_mission_submit)
         self.gridLayout.addWidget(self.frame_3, 1, 1, 1, 1)
         self.firefox_log = QtWidgets.QTextBrowser(self.centralwidget)
+        self.firefox_log.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         self.firefox_log.setObjectName("firefox_log")
         self.gridLayout.addWidget(self.firefox_log, 2, 3, 1, 1)
         self.chrome_log = QtWidgets.QTextBrowser(self.centralwidget)

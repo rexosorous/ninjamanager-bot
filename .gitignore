@@ -107,3 +107,4 @@ venv.bak/
 json_txt/accounts.json
 geckodriver.log
 releases
+build_debugger.bat

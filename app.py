@@ -1,6 +1,6 @@
 from functools import partial
+from PyQt5.QtGui import QTextCursor
 from PyQt5 import QtWidgets
-from PyQt5 import QtGui
 from sys import exit
 import traceback
 import threading
@@ -13,6 +13,7 @@ import nmbot
 
 
 # TO DO
+# if there are no rematch challenges and you have x amount of energy, challenge?
 # implement databases
 # error checking for incorrect mission data
 # gold gain from world grinding
@@ -32,8 +33,8 @@ class GUI():
         self.cookies = self.get_cookies()
         self.stats = stats
         self.loggers = loggers
-        self.loggers['chrome'] = logger.Logger('chrome', self.gui.chrome_log)
-        self.loggers['firefox'] = logger.Logger('firefox', self.gui.firefox_log)
+        self.loggers['chrome'] = logger.Logger('chrome')
+        self.loggers['firefox'] = logger.Logger('firefox')
 
         self.connect_buttons()
         self.ui_changes()
@@ -51,6 +52,9 @@ class GUI():
         self.gui.firefox_stop.clicked.connect(partial(self.stop, 'firefox'))
         self.gui.firefox_mission_submit.clicked.connect(partial(self.change_mission, 'firefox'))
 
+        self.loggers['chrome'].log_signal.connect(self.gui_log)
+        self.loggers['firefox'].log_signal.connect(self.gui_log)
+
 
 
     def ui_changes(self):
@@ -61,14 +65,22 @@ class GUI():
 
 
     def start(self, browser: str):
+        # makes a thread for the browser to stop gui from freezing
         if browser in self.browsers.keys(): # if browser is in the dict
             if self.browsers[browser]: # if the value at browser exists
                 return # don't restart the bot
 
-        self.browsers[browser] = nmbot.NMBot(self.accounts[browser], self.cookies[browser], self.stats[browser], self.loggers[browser], browser)
-        browser_thread = threading.Thread(target=self.browsers[browser].execute)
+        browser_thread = threading.Thread(target=self.start_browser, args=[browser])
         browser_thread.daemon = True
         browser_thread.start()
+
+
+
+
+    def start_browser(self, browser: str):
+        # starts selenium
+        self.browsers[browser] = nmbot.NMBot(self.accounts[browser], self.cookies[browser], self.stats[browser], self.loggers[browser], browser)
+        self.browsers[browser].execute()
 
 
 
@@ -127,6 +139,13 @@ class GUI():
 
 
 
+    def gui_log(self, browser: str, msg: str):
+        log_picker = {'chrome': self.gui.chrome_log, 'firefox': self.gui.firefox_log}
+        log_picker[browser].append(msg)
+        log_picker[browser].moveCursor(QTextCursor.End)
+
+
+
 
 
 
@@ -157,6 +176,11 @@ if __name__ == "__main__":
 
     try:
         gui = GUI(loggers, stats)
+    except Exception as e:
+        error_string = '\n\n\n\n\n' + str(e) + '\n' + traceback.format_exc()
+        print(error_string)
+        with open('FATAL_ERROR.txt', 'w+') as file:
+            file.write(error_string)
     finally:
         for logger in loggers:
             loggers[logger].close()

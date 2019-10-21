@@ -1,13 +1,12 @@
-from selenium import webdriver
 from selenium.common.exceptions import *
+from selenium import webdriver
 from random import uniform
 from time import sleep
-import threading
 import traceback
 import json
 
-import logger
 from exceptions import *
+import logger
 
 
 
@@ -28,8 +27,8 @@ class NMBot():
         self.bot.get('https://www.ninjamanager.com')
 
         self.login(account)
-        self.logger.log('all checks successful')
         self.bot.add_cookie(cookie)
+        self.logger.log('all checks successful')
 
         self.arena_energy = True
         self.world_energy = True
@@ -39,37 +38,31 @@ class NMBot():
 
 
     def execute(self):
-        # makes a thread for the main loop
-        self.loop_thread = threading.Thread(target=self.main_loop)
-        self.loop_thread.daemon = True
-        self.loop_thread.start()
-
-
-
-    def main_loop(self):
         try:
             self.logger.log('starting main loop ...')
-            self.logger.log('\n\n\n')
 
             while True:
+                self.logger.log('\n\n\n\n\n\n')
                 self.check_energy()
 
                 if self.arena_energy or self.world_energy:
                     self.logger.log('LOOP #' + str(self.stats['loop_count']) + '\n')
 
                     if self.arena_energy:
+                        self.logger.log('starting arena challenges ...')
                         self.arena_actions()
-                        self.logger.log('')
+                        self.logger.log('finished arena challenges\n')
                         self.slp(900, 1080) # 15 to 18 minutes
                     else:
                         self.logger.log('ARENA out of energy\n')
 
                     if self.world_energy:
+                        self.logger.log('starting world missions ...')
                         self.world_actions()
+                        self.logger.log('finished world missions')
                     else:
                         self.logger.log('WORLD out of energy')
 
-                    self.logger.log('\n\n\n\n\n\n')
                     self.stats['loop_count'] += 1
 
                 self.slp(900, 1080) # 15 to 18 minutes
@@ -98,6 +91,11 @@ class NMBot():
         # rematches every team possible
         challengers = self.bot.find_elements_by_class_name('-icon-challenge-return')
         rematch = []
+
+        if not challengers:
+            self.logger.log('no challenges')
+            return
+
         for ch in challengers:
             try:
                 team = ch.get_attribute('data-teamid')
@@ -107,18 +105,23 @@ class NMBot():
                 ch.click()
                 self.slp(3, 5)
 
-                # check if we ran out of energy
+                # perform some checks
                 try:
-                    self.bot.find_element_by_class_name('c-overlay-message__text') # this element only appears if out of energy in which case a NoSuchElementException is raised
-                    raise OutOfEnergy
+                    overlay = self.bot.find_element_by_class_name('c-overlay-message__text') # this element only appears if out of energy or max challenges
+                    if 'too many opponents' in overlay.text:
+                        raise MaxChallenges
+                    elif 'energy' in overlay.text:
+                        raise OutOfEnergy
                 except NoSuchElementException:
                     pass
 
                 self.stats['arena_battles'] += 1
                 self.logger.log('challenged team #' + team)
                 rematch.append(team)
-            except ElementClickInterceptedException:
-                self.logger.log('could not challenge team #' + team + '. could not click.')
+            except MaxChallenges:
+                self.logger.log('could not challenge team #' + team + '. reached max challenges')
+            except (ElementClickInterceptedException, ElementNotInteractableException):
+                self.logger.log('could not challenge team #' + team + '. unable to click element.')
 
 
 
@@ -169,7 +172,7 @@ class NMBot():
 
     # GENERAL
     def login(self, account):
-        self.logger.log('loggin in ...')
+        self.logger.log('logging in ...')
         self.bot.find_element_by_class_name('header-inside__account-login').click()
         self.slp(3, 6)
         self.bot.find_element_by_id('input-login').send_keys(account['username'])
@@ -228,10 +231,10 @@ class NMBot():
     def goto(self, area: str):
         # navigates to a part of the website
         class_name = "-tab-" + area
-        arena_button = self.bot.find_element_by_class_name(class_name)
+        area_button = self.bot.find_element_by_class_name(class_name)
         self.slp(0.5, 2)
-        arena_button.click()
-        self.slp(2, 8)
+        area_button.click()
+        self.slp(4, 8)
 
 
 
