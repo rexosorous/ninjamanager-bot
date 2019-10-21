@@ -12,7 +12,7 @@ starting main loop ...
 
 
 Arena Energy = 3
-World Energy = 133
+World Energy = 125
 LOOP #0
 
 ARENA out of energy
@@ -29,70 +29,13 @@ finished world missions
 
 
 Arena Energy = 5
-World Energy = 130
+World Energy = 122
 LOOP #1
 
 starting arena challenges ...
-challenged team #2380
+challenged team #1537
 RAN OUT OF ARENA ENERGY
 finished arena challenges
-
-starting world missions ...
-world won
-no item
-finished world missions
-
-
-
-
-
-
-
-Arena Energy = 4
-World Energy = 129
-LOOP #2
-
-starting arena challenges ...
-challenged team #3029
-RAN OUT OF ARENA ENERGY
-finished arena challenges
-
-starting world missions ...
-world won
-no item
-finished world missions
-
-
-
-
-
-
-
-Arena Energy = 4
-World Energy = 127
-LOOP #3
-
-starting arena challenges ...
-challenged team #254
-RAN OUT OF ARENA ENERGY
-finished arena challenges
-
-starting world missions ...
-world won
-no item
-finished world missions
-
-
-
-
-
-
-
-Arena Energy = 3
-World Energy = 126
-LOOP #4
-
-ARENA out of energy
 
 starting world missions ...
 world won
@@ -106,11 +49,11 @@ finished world missions
 
 
 Arena Energy = 5
-World Energy = 122
-LOOP #5
+World Energy = 120
+LOOP #2
 
 starting arena challenges ...
-challenged team #1537
+challenged team #3029
 RAN OUT OF ARENA ENERGY
 finished arena challenges
 

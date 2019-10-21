@@ -11,84 +11,22 @@ starting main loop ...
 
 
 
-Arena Energy = 24
-World Energy = 113
+Arena Energy = 16
+World Energy = 110
 LOOP #0
 
 starting arena challenges ...
-could not challenge team #1488. reached max challenges
-could not challenge team #198. reached max challenges
-could not challenge team #80. reached max challenges
-could not challenge team #9997. reached max challenges
-could not challenge team #9997. reached max challenges
-could not challenge team #9997. reached max challenges
-could not challenge team #9997. reached max challenges
-finished arena challenges
-
-starting world missions ...
-world won
-no item
-finished world missions
-
-
-
-
-
-
-
-Arena Energy = 28
-World Energy = 112
-LOOP #1
-
-starting arena challenges ...
-challenged team #254
-could not challenge team #1488. reached max challenges
-could not challenge team #198. reached max challenges
-could not challenge team #80. reached max challenges
-finished arena challenges
-
-starting world missions ...
-world won
-no item
-finished world missions
-
-
-
-
-
-
-
-Arena Energy = 27
-World Energy = 111
-LOOP #2
-
-starting arena challenges ...
-challenged team #254
-could not challenge team #1488. reached max challenges
-could not challenge team #198. reached max challenges
-could not challenge team #80. reached max challenges
-finished arena challenges
-
-starting world missions ...
-world won
-no item
-finished world missions
-
-
-
-
-
-
-
-Arena Energy = 27
-World Energy = 109
-LOOP #3
-
-starting arena challenges ...
-challenged team #3378
-challenged team #9502
-challenged team #136
-challenged team #294
+could not challenge team #1748. reached max challenges
+could not challenge team #3378. unable to click element.
+could not challenge team #9502. unable to click element.
+could not challenge team #6293. unable to click element.
+could not challenge team #136. unable to click element.
+could not challenge team #6293. reached max challenges
+could not challenge team #136. reached max challenges
+could not challenge team #3378. reached max challenges
+could not challenge team #9502. reached max challenges
+could not challenge team #45. reached max challenges
+could not challenge team #294. reached max challenges
 finished arena challenges
 
 starting world missions ...
@@ -102,36 +40,27 @@ finished world missions
 
 
 
-Arena Energy = 14
+Arena Energy = 20
 World Energy = 108
-LOOP #4
+LOOP #1
 
 starting arena challenges ...
 could not challenge team #1748. reached max challenges
-could not challenge team #3378. unable to click element.
 could not challenge team #9502. unable to click element.
 could not challenge team #6293. unable to click element.
-could not challenge team #294. unable to click element.
 could not challenge team #136. unable to click element.
-could not challenge team #1748. reached max challenges
 could not challenge team #6293. reached max challenges
 could not challenge team #136. reached max challenges
-could not challenge team #136. reached max challenges
 could not challenge team #3378. reached max challenges
-could not challenge team #9502. reached max challenges
-could not challenge team #9502. reached max challenges
-could not challenge team #9502. reached max challenges
-could not challenge team #9502. reached max challenges
 could not challenge team #9502. reached max challenges
 could not challenge team #45. reached max challenges
 could not challenge team #294. reached max challenges
-could not challenge team #294. reached max challenges
-could not challenge team #294. reached max challenges
-could not challenge team #136. reached max challenges
-could not challenge team #9502. reached max challenges
-could not challenge team #3378. reached max challenges
 finished arena challenges
 
+starting world missions ...
+world won
+no item
+finished world missions
 
 
 
