@@ -1,0 +1,120 @@
+starting bot ...
+navigating to ninjamanager.com ...
+logging in ...
+login successful
+all checks successful
+starting main loop ...
+
+
+
+
+
+
+
+Arena Energy = 3
+World Energy = 133
+LOOP #0
+
+ARENA out of energy
+
+starting world missions ...
+world won
+no item
+finished world missions
+
+
+
+
+
+
+
+Arena Energy = 5
+World Energy = 130
+LOOP #1
+
+starting arena challenges ...
+challenged team #2380
+RAN OUT OF ARENA ENERGY
+finished arena challenges
+
+starting world missions ...
+world won
+no item
+finished world missions
+
+
+
+
+
+
+
+Arena Energy = 4
+World Energy = 129
+LOOP #2
+
+starting arena challenges ...
+challenged team #3029
+RAN OUT OF ARENA ENERGY
+finished arena challenges
+
+starting world missions ...
+world won
+no item
+finished world missions
+
+
+
+
+
+
+
+Arena Energy = 4
+World Energy = 127
+LOOP #3
+
+starting arena challenges ...
+challenged team #254
+RAN OUT OF ARENA ENERGY
+finished arena challenges
+
+starting world missions ...
+world won
+no item
+finished world missions
+
+
+
+
+
+
+
+Arena Energy = 3
+World Energy = 126
+LOOP #4
+
+ARENA out of energy
+
+starting world missions ...
+world won
+no item
+finished world missions
+
+
+
+
+
+
+
+Arena Energy = 5
+World Energy = 122
+LOOP #5
+
+starting arena challenges ...
+challenged team #1537
+RAN OUT OF ARENA ENERGY
+finished arena challenges
+
+
+
+
+closing bot

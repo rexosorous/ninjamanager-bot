@@ -109,6 +109,7 @@ class NMBot():
                 try:
                     overlay = self.bot.find_element_by_class_name('c-overlay-message__text') # this element only appears if out of energy or max challenges
                     if 'too many opponents' in overlay.text:
+                        rematch.append(team)
                         raise MaxChallenges
                     elif 'energy' in overlay.text:
                         raise OutOfEnergy
