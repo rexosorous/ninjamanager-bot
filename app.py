@@ -7,6 +7,7 @@ import threading
 import json
 import os
 
+from exceptions import *
 import main_ui
 import logger
 import nmbot
@@ -78,8 +79,13 @@ class GUI():
 
     def start_browser(self, browser: str):
         # starts selenium
-        self.browsers[browser] = nmbot.NMBot(self.accounts[browser], self.cookies[browser], self.stats[browser], self.loggers[browser], browser)
-        self.browsers[browser].execute()
+        try:
+            self.browsers[browser] = nmbot.NMBot(self.accounts[browser], self.cookies[browser], self.stats[browser], self.loggers[browser], browser)
+            self.browsers[browser].execute()
+        except LoginFailure:
+            self.loggers[browser].log('LOGIN FAILED\naborting ...')
+            self.browsers[browser].stop()
+            del self.browsers[browser]
 
 
 

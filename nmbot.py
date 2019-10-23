@@ -184,7 +184,9 @@ class NMBot():
         self.bot.find_element_by_id('login-nm-button').click()
         self.slp(10, 15)
 
-        assert "Home" in self.bot.title, 'LOGIN FAILED'
+        if "Home" not in self.bot.title:
+            raise LoginFailure
+
         self.logger.log('login successful')
 
 

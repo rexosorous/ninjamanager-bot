@@ -4,5 +4,5 @@ class OutOfEnergy(Exception):
 class MaxChallenges(Exception):
     pass
 
-class NormalExit(Exception):
+class LoginFailure(Exception):
     pass
