@@ -13,7 +13,6 @@ import nmbot
 
 
 # TO DO
-# if there are no rematch challenges and you have x amount of energy, challenge?
 # implement databases
 # error checking for incorrect mission data
 # gold gain from world grinding
@@ -87,6 +86,7 @@ class GUI():
     def stop(self, browser: str):
         if browser in self.browsers.keys():
             self.browsers[browser].stop()
+            self.loggers[browser].log(get_stats(self.stats, browser))
             del self.browsers[browser]
 
 
@@ -148,6 +148,19 @@ class GUI():
 
 
 
+def get_stats(stats, browser: str):
+    # returns a formatted string of stats
+    return(str(browser + ' STATS' +
+                         '\nTotal Loops:   ' + str(stats[browser]['loop_count']) +
+                         '\nArena Battles: ' + str(stats[browser]['arena_battles']) +
+                         '\nWorld Wins:    ' + str(stats[browser]['world_successes']) +
+                         '\nWorld Losses:  ' + str(stats[browser]['world_losses']) +
+                         '\nItems Gained:  ' + str(stats[browser]['item_successes']) + '\n\n'))
+
+
+
+
+
 
 if __name__ == "__main__":
     loggers = {
@@ -189,9 +202,4 @@ if __name__ == "__main__":
             os.remove('json_txt/summary.txt')
         with open('json_txt/summary.txt', 'a+') as file:
             for browser in stats:
-                file.write(browser + ' STATS' +
-                         '\nTotal Loops:   ' + str(stats[browser]['loop_count']) +
-                         '\nArena Battles: ' + str(stats[browser]['arena_battles']) +
-                         '\nWorld Wins:    ' + str(stats[browser]['world_successes']) +
-                         '\nWorld Losses:  ' + str(stats[browser]['world_losses']) +
-                         '\nItems Gained:  ' + str(stats[browser]['item_successes']) + '\n\n')
+                file.write(get_stats(stats, browser))

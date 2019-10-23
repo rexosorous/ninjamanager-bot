@@ -1,0 +1,37 @@
+starting bot ...
+navigating to ninjamanager.com ...
+logging in ...
+starting bot ...
+navigating to ninjamanager.com ...
+logging in ...
+login successful
+all checks successful
+starting main loop ...
+
+
+
+
+
+
+
+Arena Energy = 4
+World Energy = 32
+LOOP #0
+
+starting arena challenges ...
+challenged team #1103
+RAN OUT OF ARENA ENERGY
+finished arena challenges
+
+
+
+
+closing bot
+chrome STATS
+Total Loops:   0
+Arena Battles: 1
+World Wins:    0
+World Losses:  0
+Items Gained:  0
+
+
