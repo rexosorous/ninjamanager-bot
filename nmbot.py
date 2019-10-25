@@ -142,37 +142,41 @@ class NMBot():
 
     def do_mission(self):
         # executes world mission
-        self.slp(3, 6)
-        self.bot.find_element_by_xpath('//div[@data-url="' + self.area_url[self.area_url.find('/world'):] + '/mission/' + self.mission_num + '"]').click() # fight button
-        self.slp(4, 10)
-        self.bot.find_element_by_class_name('pm-battle-buttons__skip').click() # skip button
-        self.slp(10, 20)
-
-        # check if we won or lost the mission
-        if self.bot.find_element_by_class_name('pm-battle-matchup__title').text == 'Victory':
-            self.stats['world_successes'] += 1
-            self.logger.log('world won')
-        elif self.bot.find_element_by_class_name('pm-battle-matchup__title').text == 'Defeat':
-            self.stats['world_losses'] += 1
-            self.logger.log('world lost')
-
-        # check if we got any items
         try:
-            items = self.bot.find_elements_by_class_name('pm-battle-treasures__drop')
-            for i in items:
-                item_name = i.find_element_by_xpath('./div[@class="c-item -size-l h-item-material-1    js-item-tooltip"]/div[@class="c-item__name  a-item-name"]').text
-                if '-status-failed' in i.get_attribute('class'):
-                    self.logger.log('   failed to get item ' + item_name)
-                elif '-status-done' in i.get_attribute('class'):
-                    self.logger.log('   obtained item ' + item_name)
-                    if item_name in self.stats['items_gained'].keys():
-                        self.stats['items_gained'][item_name] += 1
-                    else:
-                        self.stats['items_gained'][item_name] = 0
-        except NoSuchElementException:
-            self.logger.log('   mission has no item drops')
+            self.slp(10, 20)
+            self.bot.find_element_by_xpath('//div[@data-url="' + self.area_url[self.area_url.find('/world'):] + '/mission/' + self.mission_num + '"]').click() # fight button
+            self.slp(10, 20)
+            self.bot.find_element_by_class_name('pm-battle-buttons__skip').click() # skip button
+            self.slp(10, 20)
 
-        self.bot.find_element_by_class_name('pm-battle-buttons__finish').click() # finish button
+            # check if we won or lost the mission
+            if self.bot.find_element_by_class_name('pm-battle-matchup__title').text == 'Victory':
+                self.stats['world_successes'] += 1
+                self.logger.log('world won')
+            elif self.bot.find_element_by_class_name('pm-battle-matchup__title').text == 'Defeat':
+                self.stats['world_losses'] += 1
+                self.logger.log('world lost')
+
+            # check if we got any items
+            try:
+                items = self.bot.find_elements_by_class_name('pm-battle-treasures__drop')
+                for i in items:
+                    item_name = i.find_element_by_xpath('./div[@class="c-item -size-l h-item-material-1    js-item-tooltip"]/div[@class="c-item__name  a-item-name"]').text
+                    if '-status-failed' in i.get_attribute('class'):
+                        self.logger.log('   failed to get item ' + item_name)
+                    elif '-status-done' in i.get_attribute('class'):
+                        self.logger.log('   obtained item ' + item_name)
+                        if item_name in self.stats['items_gained'].keys():
+                            self.stats['items_gained'][item_name] += 1
+                        else:
+                            self.stats['items_gained'][item_name] = 0
+            except NoSuchElementException:
+                self.logger.log('   mission has no item drops')
+
+            self.bot.find_element_by_class_name('pm-battle-buttons__finish').click() # finish button
+        except (ElementClickInterceptedException, ElementNotInteractableException):
+            self.logger.log('error - could not click on world mission buttons')
+
 
 
 

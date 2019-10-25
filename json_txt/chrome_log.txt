@@ -1,0 +1,82 @@
+starting bot ...
+navigating to ninjamanager.com ...
+logging in ...
+login successful
+all checks successful
+starting main loop ...
+
+
+
+
+
+
+
+Arena Energy = 5
+World Energy = 28
+LOOP #0
+
+starting arena challenges ...
+challenged team #7328
+RAN OUT OF ARENA ENERGY
+finished arena challenges
+
+starting world missions ...
+world won
+   failed to get item Zephyr Leaf
+finished world missions
+
+
+
+
+
+
+
+Arena Energy = 4
+World Energy = 27
+LOOP #1
+
+starting arena challenges ...
+challenged team #311
+RAN OUT OF ARENA ENERGY
+finished arena challenges
+
+starting world missions ...
+
+
+
+
+
+
+
+Message: element click intercepted: Element <div class="pm-battle-buttons__skip  c-button -color-themed-yes -c-icon -width-auto  js-battle-skip">...</div> is not clickable at point (835, 393). Other element would receive the click: <div class="pm-battle-matchup__buttons">...</div>
+  (Session info: chrome=77.0.3865.120)
+
+Traceback (most recent call last):
+  File "nmbot.py", line 61, in execute
+    self.world_actions()
+  File "nmbot.py", line 137, in world_actions
+    self.do_mission()
+  File "nmbot.py", line 148, in do_mission
+    self.bot.find_element_by_class_name('pm-battle-buttons__skip').click() # skip button
+  File "site-packages\selenium\webdriver\remote\webelement.py", line 80, in click
+  File "site-packages\selenium\webdriver\remote\webelement.py", line 633, in _execute
+  File "site-packages\selenium\webdriver\remote\webdriver.py", line 321, in execute
+  File "site-packages\selenium\webdriver\remote\errorhandler.py", line 242, in check_response
+selenium.common.exceptions.ElementClickInterceptedException: Message: element click intercepted: Element <div class="pm-battle-buttons__skip  c-button -color-themed-yes -c-icon -width-auto  js-battle-skip">...</div> is not clickable at point (835, 393). Other element would receive the click: <div class="pm-battle-matchup__buttons">...</div>
+  (Session info: chrome=77.0.3865.120)
+
+
+
+
+
+closing bot ...
+
+chrome STATS
+Total Loops:   1
+Arena Battles: 2
+World Wins:    1
+World Losses:  0
+Items Gained:
+
+
+
