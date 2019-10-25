@@ -48,13 +48,13 @@ class NMBot():
                 if self.arena_energy or self.world_energy:
                     self.logger.log('LOOP #' + str(self.stats['loop_count']) + '\n')
 
-                    # if self.arena_energy:
-                    #     self.logger.log('starting arena challenges ...')
-                    #     self.arena_actions()
-                    #     self.logger.log('finished arena challenges\n')
-                    #     self.slp(900, 1080) # 15 to 18 minutes
-                    # else:
-                    #     self.logger.log('ARENA out of energy\n')
+                    if self.arena_energy:
+                        self.logger.log('starting arena challenges ...')
+                        self.arena_actions()
+                        self.logger.log('finished arena challenges\n')
+                        self.slp(900, 1080) # 15 to 18 minutes
+                    else:
+                        self.logger.log('ARENA out of energy\n')
 
                     if self.world_energy:
                         self.logger.log('starting world missions ...')

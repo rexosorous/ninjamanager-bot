@@ -7,9 +7,9 @@ Items Gained:
 
 
 firefox STATS
-Total Loops:   1
+Total Loops:   0
 Arena Battles: 0
-World Wins:    1
+World Wins:    0
 World Losses:  0
 Items Gained:
 
