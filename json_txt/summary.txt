@@ -1,14 +1,16 @@
 chrome STATS
 Total Loops:   0
-Arena Battles: 1
-World Wins:    0
-World Losses:  0
-Items Gained:  0
-
-firefox STATS
-Total Loops:   0
 Arena Battles: 0
 World Wins:    0
 World Losses:  0
-Items Gained:  0
+Items Gained:
+
+
+firefox STATS
+Total Loops:   1
+Arena Battles: 0
+World Wins:    1
+World Losses:  0
+Items Gained:
+
 

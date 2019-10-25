@@ -127,7 +127,7 @@ class GUI():
 
         if browser in self.browsers.keys(): # allow updating without program running
             self.browsers[browser].load_mission(browser)
-            self.browsers[browser].logger.log('updated mission data')
+            self.browsers[browser].logger.log('\nupdated mission data')
 
 
 
@@ -156,12 +156,15 @@ class GUI():
 
 def get_stats(stats, browser: str):
     # returns a formatted string of stats
-    return(str(browser + ' STATS' +
+    basic = str(browser + ' STATS' +
                          '\nTotal Loops:   ' + str(stats[browser]['loop_count']) +
                          '\nArena Battles: ' + str(stats[browser]['arena_battles']) +
                          '\nWorld Wins:    ' + str(stats[browser]['world_successes']) +
-                         '\nWorld Losses:  ' + str(stats[browser]['world_losses']) +
-                         '\nItems Gained:  ' + str(stats[browser]['item_successes']) + '\n\n'))
+                         '\nWorld Losses:  ' + str(stats[browser]['world_losses']) + '\n')
+    items = 'Items Gained:\n'
+    for item in stats[browser]['items_gained']:
+        items.append('                ' + item + ': ' + stats[browser]['items_gained']['item'] + '\n')
+    return basic + items + '\n\n'
 
 
 
@@ -181,14 +184,14 @@ if __name__ == "__main__":
             'arena_battles': 0,
             'world_successes': 0,
             'world_losses': 0,
-            'item_successes': 0
+            'items_gained': {}
         },
         'firefox': {
             'loop_count': 0,
             'arena_battles': 0,
             'world_successes': 0,
             'world_losses': 0,
-            'item_successes': 0
+            'items_gained': {}
         }
     }
 
