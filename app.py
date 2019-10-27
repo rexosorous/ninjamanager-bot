@@ -157,14 +157,15 @@ class GUI():
 def get_stats(stats, browser: str):
     # returns a formatted string of stats
     basic = str(browser + ' STATS' +
-                         '\nTotal Loops:   ' + str(stats[browser]['loop_count']) +
-                         '\nArena Battles: ' + str(stats[browser]['arena_battles']) +
-                         '\nWorld Wins:    ' + str(stats[browser]['world_successes']) +
-                         '\nWorld Losses:  ' + str(stats[browser]['world_losses']) + '\n')
+                          '\nTotal Loops:   ' + str(stats[browser]['loop_count']) +
+                          '\nArena Battles: ' + str(stats[browser]['arena_battles']) +
+                          '\nWorld Wins:    ' + str(stats[browser]['world_successes']) +
+                          '\nWorld Losses:  ' + str(stats[browser]['world_losses']) + '\n')
     items = 'Items Gained:\n'
     for item in stats[browser]['items_gained']:
-        items.append('                ' + item + ': ' + stats[browser]['items_gained']['item'] + '\n')
-    return basic + items + '\n\n'
+        items += str('                ' + item + ': ' + str(stats[browser]['items_gained'][item]) + '\n')
+    rstring = basic + items + '\n\n'
+    return rstring
 
 
 

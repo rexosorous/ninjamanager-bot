@@ -169,7 +169,7 @@ class NMBot():
                         if item_name in self.stats['items_gained'].keys():
                             self.stats['items_gained'][item_name] += 1
                         else:
-                            self.stats['items_gained'][item_name] = 0
+                            self.stats['items_gained'][item_name] = 1
             except NoSuchElementException:
                 self.logger.log('   mission has no item drops')
 
