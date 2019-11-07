@@ -105,6 +105,7 @@ class GUI():
             self.browsers[browser].check_gold()
             self.browsers[browser].stop()
             self.loggers[browser].log(get_stats(self.stats, browser))
+            self.signals.info_signal.emit()
             del self.browsers[browser]
 
 

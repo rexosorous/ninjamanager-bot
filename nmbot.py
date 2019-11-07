@@ -16,6 +16,8 @@ class NMBot():
         self.logger = logger
         self.signals = signals
 
+        self.turn_off = False
+
         self.load_mission(browser)
         self.load_cooldown(browser)
         self.logger.log('starting bot ...')
@@ -74,6 +76,9 @@ class NMBot():
 
                 self.slp(self.cooldown_lower, self.cooldown_upper)
             except Exception as e:
+                if self.turn_off:
+                    return
+
                 self.logger.log('\n\n\n\n\n\n')
                 self.logger.log('error during main loop. will try to restart after 15 minutes')
                 self.logger.log('\n\n\n\n\n\n')
@@ -295,5 +300,6 @@ class NMBot():
 
     def stop(self):
         # closes the browser
+        self.turn_off = True
         self.logger.log('\n\n\nclosing bot ...\n')
         self.bot.quit()
