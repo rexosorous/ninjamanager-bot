@@ -6,3 +6,6 @@ class MaxChallenges(Exception):
 
 class LoginFailure(Exception):
     pass
+
+class UnknownException(Exception):
+    pass

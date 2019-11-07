@@ -38,10 +38,10 @@ class NMBot():
 
 
     def execute(self):
-        try:
-            self.logger.log('starting main loop ...')
+        self.logger.log('starting main loop ...')
 
-            while True:
+        while True:
+            try:
                 self.logger.log('\n\n\n\n\n\n')
                 self.check_energy()
 
@@ -50,9 +50,12 @@ class NMBot():
 
                     if self.arena_energy:
                         self.logger.log('starting arena challenges ...')
-                        self.arena_actions()
+                        challenge_count = self.arena_actions()
                         self.logger.log('finished arena challenges\n')
-                        self.slp(900, 1080) # 15 to 18 minutes
+                        if challenge_count > 0:
+                            self.slp(780, 960) # 13 to 16 minutes
+                        else:
+                            self.slp(60, 180) # 1 to 3 minutes
                     else:
                         self.logger.log('ARENA out of energy\n')
 
@@ -65,11 +68,15 @@ class NMBot():
 
                     self.stats['loop_count'] += 1
 
-                self.slp(900, 1080) # 15 to 18 minutes
-        except Exception as e:
-            self.logger.log('\n\n\n\n\n\n')
-            self.logger.log('%s' % e)
-            self.logger.log(traceback.format_exc())
+                self.slp(780, 960) # 13 to 16 mintues
+            except Exception as e:
+                self.logger.log('\n\n\n\n\n\n')
+                self.logger.log('error during main loop. will try to restart after 15 minutes')
+                self.logger.log('error:')
+                self.logger.log('%s' % e)
+                self.logger.log(traceback.format_exc())
+                self.goto('home')
+                sleep(900) # 15 minutes
 
 
 
@@ -87,10 +94,11 @@ class NMBot():
 
 
 
-    def challenge(self):
+    def challenge(self) -> int:
         # rematches every team possible
         challengers = self.bot.find_elements_by_class_name('-icon-challenge-return')
         rematch = []
+        challenge_count = 0
 
         if not challengers:
             self.logger.log('no challenges')
@@ -108,22 +116,31 @@ class NMBot():
                 # perform some checks
                 try:
                     overlay = self.bot.find_element_by_class_name('c-overlay-message__text') # this element only appears if out of energy or max challenges
-                    if 'too many opponents' in overlay.text:
+                    if 'too many opponents' in overlay.text or 'max amount of challenges' in overlay.text:
                         rematch.append(team)
                         self.bot.find_element_by_class_name('c-overlay-message__close').click()
                         raise MaxChallenges
                     elif 'energy' in overlay.text:
                         raise OutOfEnergy
+                    else:
+                        raise UnknownException
                 except NoSuchElementException:
-                    pass
-
-                self.stats['arena_battles'] += 1
-                self.logger.log('challenged team #' + team)
-                rematch.append(team)
+                    self.stats['arena_battles'] += 1
+                    challenge_count += 1
+                    self.logger.log('   challenged team #' + team)
+                    rematch.append(team)
             except MaxChallenges:
                 self.logger.log('could not challenge team #' + team + '. reached max challenges')
             except (ElementClickInterceptedException, ElementNotInteractableException):
                 self.logger.log('could not challenge team #' + team + '. unable to click element.')
+            except UnknownException:
+                self.logger.log('could not challenge team #' + team + '. unknown reason')
+                try:
+                    self.bot.find_element_by_class_name('c-overlay-message__close').click()
+                except NoSuchElementException:
+                    pass
+
+        return challenge_count
 
 
 
