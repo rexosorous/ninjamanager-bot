@@ -1,0 +1,48 @@
+starting bot ...
+navigating to ninjamanager.com ...
+logging in ...
+login successful
+all checks successful
+starting main loop ...
+
+
+
+
+
+
+
+Arena Energy = 67
+World Energy = 63
+LOOP #0
+
+starting arena challenges ...
+   could not challenge team #6006. reached max challenges
+   challenged team #6293
+   challenged team #9491
+   challenged team #6891
+   challenged team #1271
+   could not challenge team #73. reached max challenges
+   challenged team #175
+   challenged team #7492
+   challenged team #1234
+finished arena challenges
+
+starting world missions ...
+world won
+   failed to get item Zephyr Leaf
+finished world missions
+
+
+
+closing bot ...
+
+chrome STATS
+Total Loops:   1
+Gold Gained:   16
+Arena Battles: 7
+World Wins:    1
+World Losses:  0
+Items Gained:
+
+
+

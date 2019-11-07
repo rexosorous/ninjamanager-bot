@@ -11,11 +11,13 @@ import logger
 
 
 class NMBot():
-    def __init__(self, account, cookie, stats, logger, browser: str):
+    def __init__(self, account, cookie, stats, logger, browser: str, signals):
         self.stats = stats
         self.logger = logger
+        self.signals = signals
 
         self.load_mission(browser)
+        self.load_cooldown(browser)
         self.logger.log('starting bot ...')
 
         if browser == 'chrome':
@@ -53,13 +55,10 @@ class NMBot():
 
                     if self.arena_energy:
                         self.logger.log('starting arena challenges ...')
-                        challenge_count = self.arena_actions()
+                        self.arena_actions()
                         self.logger.log('finished arena challenges\n')
-                        if challenge_count > 0:
-                            self.check_gold()
-                            self.slp(780, 960) # 13 to 16 minutes
-                        else:
-                            self.slp(60, 180) # 1 to 3 minutes
+                        self.check_gold()
+                        self.slp(self.cooldown_lower, self.cooldown_upper)
                     else:
                         self.logger.log('ARENA out of energy\n')
 
@@ -73,12 +72,11 @@ class NMBot():
 
                     self.stats['loop_count'] += 1
 
-                self.slp(780, 960) # 13 to 16 mintues
-            except ConnectionRefusedError:
-                return
+                self.slp(self.cooldown_lower, self.cooldown_upper)
             except Exception as e:
                 self.logger.log('\n\n\n\n\n\n')
                 self.logger.log('error during main loop. will try to restart after 15 minutes')
+                self.logger.log('\n\n\n\n\n\n')
                 self.logger.log('error:')
                 self.logger.log('%s' % e)
                 self.logger.log(traceback.format_exc())
@@ -94,22 +92,21 @@ class NMBot():
         # all the things we want to do in the arena screen
         try:
             self.goto('arena')
-            return self.challenge()
+            self.challenge()
         except OutOfEnergy:
             self.logger.log('RAN OUT OF ARENA ENERGY')
             self.bot.get('https://www.ninjamanager.com')
 
 
 
-    def challenge(self) -> int:
+    def challenge(self):
         # rematches every team possible
         challengers = self.bot.find_elements_by_class_name('-icon-challenge-return')
         rematch = []
-        challenge_count = 0
 
         if not challengers:
             self.logger.log('no challenges')
-            return 0
+            return
 
         for ch in challengers:
             try:
@@ -133,7 +130,7 @@ class NMBot():
                         raise UnknownException
                 except NoSuchElementException: # operating as normal
                     self.stats['arena_battles'] += 1
-                    challenge_count += 1
+                    self.signals.info_signal.emit()
                     self.logger.log('   challenged team #' + team)
                     rematch.append(team)
             except MaxChallenges:
@@ -146,8 +143,6 @@ class NMBot():
                     self.bot.find_element_by_class_name('c-overlay-message__close').click()
                 except NoSuchElementException:
                     pass
-
-        return challenge_count
 
 
 
@@ -227,11 +222,21 @@ class NMBot():
 
     def load_mission(self, browser: str):
         # updates mission data from json file
-        with open('json_txt/world.json', 'r') as file:
+        with open('json_txt/options.json', 'r') as file:
             data = json.load(file)
 
-        self.area_url = data[browser]['area_url']
-        self.mission_num = data[browser]['mission_num']
+        self.area_url = data['world'][browser]['area_url']
+        self.mission_num = data['world'][browser]['mission_num']
+
+
+
+    def load_cooldown(self, browser: str):
+        # updates the time between arena and world actions
+        with open('json_txt/options.json', 'r') as file:
+            data = json.load(file)
+
+        self.cooldown_lower = data['cooldown'][browser]['lower']
+        self.cooldown_upper = data['cooldown'][browser]['upper']
 
 
 
@@ -273,6 +278,8 @@ class NMBot():
         old_gold = self.stats['gold']
         self.stats['gold'] = int(gold_amt)
         self.stats['gold_gained'] += (self.stats['gold'] - old_gold)
+
+        self.signals.info_signal.emit()
 
 
 

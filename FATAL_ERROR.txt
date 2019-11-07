@@ -1,0 +1,14 @@
+
+
+
+
+
+name 'signal' is not defined
+Traceback (most recent call last):
+  File "app.py", line 300, in <module>
+    gui = GUI(loggers, stats)
+  File "app.py", line 37, in __init__
+    self.loggers['chrome'] = logger.Logger('chrome', self.signals)
+  File "C:\Users\J-Zach Loke\Good Stuff\programming\ninjamanager-bot\logger.py", line 9, in __init__
+    self.signals = signal
+NameError: name 'signal' is not defined

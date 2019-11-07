@@ -8,10 +8,10 @@ import json
 import os
 
 from exceptions import *
+import signals
 import main_ui
 import logger
 import nmbot
-
 
 # TO DO
 # implement databases
@@ -28,32 +28,43 @@ class GUI():
         self.gui = main_ui.Ui_main_window()
         self.gui.setupUi(self.window)
 
+        self.signals = signals.Signals()
         self.browsers = {}
         self.accounts = self.get_accounts()
         self.cookies = self.get_cookies()
         self.stats = stats
         self.loggers = loggers
-        self.loggers['chrome'] = logger.Logger('chrome')
-        self.loggers['firefox'] = logger.Logger('firefox')
+        self.loggers['chrome'] = logger.Logger('chrome', self.signals)
+        self.loggers['firefox'] = logger.Logger('firefox', self.signals)
+        self.log_picker = {'chrome': self.gui.chrome_log, 'firefox': self.gui.firefox_log}
 
         self.connect_buttons()
         self.ui_changes()
         self.window.show()
+
+        self.signals.info_signal.emit()
+
         exit(self.app.exec_())
 
 
 
     def connect_buttons(self):
+        self.gui.chrome_log_toggle.clicked.connect(partial(self.toggle_log, 'chrome'))
         self.gui.chrome_start.clicked.connect(partial(self.start, 'chrome'))
         self.gui.chrome_stop.clicked.connect(partial(self.stop, 'chrome'))
         self.gui.chrome_mission_submit.clicked.connect(partial(self.change_mission, 'chrome'))
+        self.gui.chrome_cooldown_submit.clicked.connect(partial(self.change_cooldown, 'chrome'))
 
+        self.gui.firefox_log_toggle.clicked.connect(partial(self.toggle_log, 'firefox'))
         self.gui.firefox_start.clicked.connect(partial(self.start, 'firefox'))
         self.gui.firefox_stop.clicked.connect(partial(self.stop, 'firefox'))
         self.gui.firefox_mission_submit.clicked.connect(partial(self.change_mission, 'firefox'))
+        self.gui.firefox_cooldown_submit.clicked.connect(partial(self.change_cooldown, 'firefox'))
 
-        self.loggers['chrome'].log_signal.connect(self.gui_log)
-        self.loggers['firefox'].log_signal.connect(self.gui_log)
+        # self.loggers['chrome'].log_signal.connect(self.gui_log)
+        # self.loggers['firefox'].log_signal.connect(self.gui_log)
+        self.signals.log_signal.connect(self.gui_log)
+        self.signals.info_signal.connect(self.update_info)
 
 
 
@@ -80,7 +91,7 @@ class GUI():
     def start_browser(self, browser: str):
         # starts selenium
         try:
-            self.browsers[browser] = nmbot.NMBot(self.accounts[browser], self.cookies[browser], self.stats[browser], self.loggers[browser], browser)
+            self.browsers[browser] = nmbot.NMBot(self.accounts[browser], self.cookies[browser], self.stats[browser], self.loggers[browser], browser, self.signals)
             self.browsers[browser].execute()
         except LoginFailure:
             self.loggers[browser].log('LOGIN FAILED\naborting ...')
@@ -108,7 +119,6 @@ class GUI():
             mission_data['area_url'] = self.gui.firefox_area.displayText()
             mission_data['mission_num'] = self.gui.firefox_mission_num.displayText()
 
-
         for key in mission_data: # make sure all fields are filled
             if key == '':
                 return
@@ -119,16 +129,55 @@ class GUI():
         self.gui.firefox_area.clear()
         self.gui.firefox_mission_num.clear()
 
-        with open('json_txt/world.json', 'r') as file:
+        # save data
+        with open('json_txt/options.json', 'r') as file:
             data = json.load(file)
 
-        data[browser] = mission_data
-        with open('json_txt/world.json', 'w') as file:
+        data['world'][browser] = mission_data
+        with open('json_txt/options.json', 'w') as file:
             json.dump(data, file)
 
         if browser in self.browsers.keys(): # allow updating without program running
             self.browsers[browser].load_mission(browser)
             self.browsers[browser].logger.log('\nupdated mission data')
+
+
+
+    def change_cooldown(self, browser: str):
+        # changes the time between arena and world actions in MINUTES
+        cooldown_data = {}
+
+        try:
+            if browser == 'chrome':
+                cooldown_data['lower'] = float(self.gui.chrome_cooldown_lower.displayText()) * 60
+                cooldown_data['upper'] = float(self.gui.chrome_cooldown_upper.displayText()) * 60
+            elif browser == 'firefox':
+                cooldown_data['lower'] = float(self.gui.firefox_cooldown_lower.displayText()) * 60
+                cooldown_data['upper'] = float(self.gui.firefox_cooldown_upper.displayText()) * 60
+        except ValueError:
+            return
+
+        for key in cooldown_data: # make sure all fields are filled
+            if key == '':
+                return
+
+        # clear fields
+        self.gui.chrome_cooldown_lower.clear()
+        self.gui.chrome_cooldown_upper.clear()
+        self.gui.firefox_cooldown_lower.clear()
+        self.gui.firefox_cooldown_upper.clear()
+
+        # save data
+        with open('json_txt/options.json', 'r') as file:
+            data = json.load(file)
+
+        data['cooldown'][browser] = cooldown_data
+        with open('json_txt/options.json', 'w') as file:
+            json.dump(data, file)
+
+        if browser in self.browsers.keys():
+            self.browsers[browser].load_cooldown(browser)
+            self.bwowsers[browser].logger.log('\nupdated cooldown')
 
 
 
@@ -146,10 +195,54 @@ class GUI():
 
 
 
+    def toggle_log(self, browser: str):
+        # shows and hides the log in gui
+        if self.log_picker[browser].isVisible():
+            self.log_picker[browser].hide()
+        else:
+            self.log_picker[browser].show()
+        self.window.resize(self.window.minimumSizeHint())
+
+
+
     def gui_log(self, browser: str, msg: str):
-        log_picker = {'chrome': self.gui.chrome_log, 'firefox': self.gui.firefox_log}
-        log_picker[browser].append(msg)
-        log_picker[browser].moveCursor(QTextCursor.End)
+        self.log_picker[browser].append(msg)
+        self.log_picker[browser].moveCursor(QTextCursor.End)
+
+
+
+    def update_info_loop(self):
+        # we need to emit a signal to update info in the gui because pyqt5 doesn't play nice with threading
+        while True:
+            self.info_signal.info_signal.emit()
+            sleep(15)
+
+
+
+    def update_info(self):
+        # updates info in gui
+        self.gui.chrome_loop_count.setText(str(stats['chrome']['loop_count']))
+        self.gui.chrome_gold_gained.setText(str(stats['chrome']['gold_gained']))
+        self.gui.chrome_arena_battles.setText(str(stats['chrome']['arena_battles']))
+        self.gui.chrome_world_wins.setText(str(stats['chrome']['world_successes']))
+        self.gui.chrome_world_losses.setText(str(stats['chrome']['world_losses']))
+
+        chrome_items = ''
+        for item in stats['chrome']['items_gained']:
+            chrome_items += str(item + ': ' + stats['chrome']['items_gained'][item])
+        self.gui.chrome_items_gained.setText(chrome_items)
+
+
+        self.gui.firefox_loop_count.setText(str(stats['firefox']['loop_count']))
+        self.gui.firefox_gold_gained.setText(str(stats['firefox']['gold_gained']))
+        self.gui.firefox_arena_battles.setText(str(stats['firefox']['arena_battles']))
+        self.gui.firefox_world_wins.setText(str(stats['firefox']['world_successes']))
+        self.gui.firefox_world_losses.setText(str(stats['firefox']['world_losses']))
+
+        firefox_items = ''
+        for item in stats['firefox']['items_gained']:
+            firefox_items += str(item + ': ' + stats['firefox']['items_gained'][item])
+        self.gui.firefox_items_gained.setText(firefox_items)
 
 
 
