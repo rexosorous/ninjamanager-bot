@@ -91,6 +91,7 @@ class GUI():
 
     def stop(self, browser: str):
         if browser in self.browsers.keys():
+            self.browsers[browser].check_gold()
             self.browsers[browser].stop()
             self.loggers[browser].log(get_stats(self.stats, browser))
             del self.browsers[browser]
@@ -158,6 +159,7 @@ def get_stats(stats, browser: str):
     # returns a formatted string of stats
     basic = str(browser + ' STATS' +
                           '\nTotal Loops:   ' + str(stats[browser]['loop_count']) +
+                          '\nGold Gained:   ' + str(stats[browser]['gold_gained']) +
                           '\nArena Battles: ' + str(stats[browser]['arena_battles']) +
                           '\nWorld Wins:    ' + str(stats[browser]['world_successes']) +
                           '\nWorld Losses:  ' + str(stats[browser]['world_losses']) + '\n')
@@ -181,6 +183,8 @@ if __name__ == "__main__":
 
     stats = {
         'chrome': {
+            'gold': 0,
+            'gold_gained': 0,
             'loop_count': 0,
             'arena_battles': 0,
             'world_successes': 0,
@@ -188,6 +192,8 @@ if __name__ == "__main__":
             'items_gained': {}
         },
         'firefox': {
+            'gold': 0,
+            'gold_gained': 0,
             'loop_count': 0,
             'arena_battles': 0,
             'world_successes': 0,

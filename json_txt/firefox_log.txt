@@ -1,0 +1,39 @@
+starting bot ...
+navigating to ninjamanager.com ...
+logging in ...
+login successful
+all checks successful
+starting main loop ...
+
+
+
+
+
+
+
+Arena Energy = 39
+World Energy = 106
+LOOP #0
+
+starting arena challenges ...
+   could not challenge team #6006. reached max challenges
+   challenged team #311
+   could not challenge team #2984. reached max challenges
+   challenged team #9491
+finished arena challenges
+
+
+
+
+closing bot ...
+
+firefox STATS
+Total Loops:   0
+Gold Gained:   4
+Arena Battles: 2
+World Wins:    0
+World Losses:  0
+Items Gained:
+
+
+

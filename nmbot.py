@@ -30,6 +30,9 @@ class NMBot():
         self.bot.add_cookie(cookie)
         self.logger.log('all checks successful')
 
+        self.check_gold()
+        self.stats['gold_gained'] = 0
+
         self.arena_energy = True
         self.world_energy = True
 
@@ -53,6 +56,7 @@ class NMBot():
                         challenge_count = self.arena_actions()
                         self.logger.log('finished arena challenges\n')
                         if challenge_count > 0:
+                            self.check_gold()
                             self.slp(780, 960) # 13 to 16 minutes
                         else:
                             self.slp(60, 180) # 1 to 3 minutes
@@ -63,12 +67,15 @@ class NMBot():
                         self.logger.log('starting world missions ...')
                         self.world_actions()
                         self.logger.log('finished world missions')
+                        self.check_gold()
                     else:
                         self.logger.log('WORLD out of energy')
 
                     self.stats['loop_count'] += 1
 
                 self.slp(780, 960) # 13 to 16 mintues
+            except ConnectionRefusedError:
+                return
             except Exception as e:
                 self.logger.log('\n\n\n\n\n\n')
                 self.logger.log('error during main loop. will try to restart after 15 minutes')
@@ -87,7 +94,7 @@ class NMBot():
         # all the things we want to do in the arena screen
         try:
             self.goto('arena')
-            self.challenge()
+            return self.challenge()
         except OutOfEnergy:
             self.logger.log('RAN OUT OF ARENA ENERGY')
             self.bot.get('https://www.ninjamanager.com')
@@ -102,7 +109,7 @@ class NMBot():
 
         if not challengers:
             self.logger.log('no challenges')
-            return
+            return 0
 
         for ch in challengers:
             try:
@@ -124,17 +131,17 @@ class NMBot():
                         raise OutOfEnergy
                     else:
                         raise UnknownException
-                except NoSuchElementException:
+                except NoSuchElementException: # operating as normal
                     self.stats['arena_battles'] += 1
                     challenge_count += 1
                     self.logger.log('   challenged team #' + team)
                     rematch.append(team)
             except MaxChallenges:
-                self.logger.log('could not challenge team #' + team + '. reached max challenges')
+                self.logger.log('   could not challenge team #' + team + '. reached max challenges')
             except (ElementClickInterceptedException, ElementNotInteractableException):
-                self.logger.log('could not challenge team #' + team + '. unable to click element.')
+                self.logger.log('   could not challenge team #' + team + '. unable to click element.')
             except UnknownException:
-                self.logger.log('could not challenge team #' + team + '. unknown reason')
+                self.logger.log('   could not challenge team #' + team + '. unknown reason')
                 try:
                     self.bot.find_element_by_class_name('c-overlay-message__close').click()
                 except NoSuchElementException:
@@ -192,7 +199,7 @@ class NMBot():
 
             self.bot.find_element_by_class_name('pm-battle-buttons__finish').click() # finish button
         except (ElementClickInterceptedException, ElementNotInteractableException):
-            self.logger.log('error - could not click on world mission buttons')
+            self.logger.log('   error - could not click on world mission buttons')
 
 
 
@@ -236,8 +243,6 @@ class NMBot():
 
     def check_energy(self):
         # checks how much energy we have
-        self.goto('myteam')
-
         arena_bar = self.bot.find_element_by_class_name('header-team__bar-ae')
         arena_nrg = arena_bar.find_element_by_xpath('./div[@class="c-bar__text"]/span').text
 
@@ -256,6 +261,18 @@ class NMBot():
         self.logger.log('World Energy = ' + world_nrg)
 
         self.slp(20, 30)
+
+
+
+    def check_gold(self):
+        # checks how much gold we have and how much gold we've earned
+        gold_bar = self.bot.find_element_by_class_name('header-team__resource-gold')
+        gold_amt = gold_bar.find_element_by_xpath('./span').text
+        gold_amt = gold_amt.replace(',', '')
+
+        old_gold = self.stats['gold']
+        self.stats['gold'] = int(gold_amt)
+        self.stats['gold_gained'] += (self.stats['gold'] - old_gold)
 
 
 
