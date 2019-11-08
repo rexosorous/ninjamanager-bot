@@ -1,5 +1,5 @@
-from functools import partial
 from PyQt5.QtGui import QTextCursor
+from functools import partial
 from PyQt5 import QtWidgets
 from sys import exit
 import traceback
@@ -16,7 +16,6 @@ import nmbot
 # TO DO
 # implement databases
 # error checking for incorrect mission data
-# gold gain from world grinding
 # legendary weapon grinding
 
 
@@ -242,7 +241,7 @@ class GUI():
 
         firefox_items = ''
         for item in stats['firefox']['items_gained']:
-            firefox_items += str(item + ': ' + stats['firefox']['items_gained'][item])
+            firefox_items += str(item + ': ' + str(stats['firefox']['items_gained'][item]))
         self.gui.firefox_items_gained.setText(firefox_items)
 
 

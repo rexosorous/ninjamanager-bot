@@ -485,7 +485,7 @@ class Ui_main_window(object):
 
     def retranslateUi(self, main_window):
         _translate = QtCore.QCoreApplication.translate
-        main_window.setWindowTitle(_translate("main_window", "Main Window"))
+        main_window.setWindowTitle(_translate("main_window", "Ninjamanager Bot"))
         self.chrome_log_toggle.setText(_translate("main_window", "<<"))
         self.label.setText(_translate("main_window", "CHROME"))
         self.chrome_start.setText(_translate("main_window", "START"))

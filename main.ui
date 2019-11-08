@@ -108,7 +108,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>Main Window</string>
+   <string>Ninjamanager Bot</string>
   </property>
   <property name="windowIcon">
    <iconset>
