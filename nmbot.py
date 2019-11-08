@@ -15,6 +15,7 @@ class NMBot():
         self.stats = stats
         self.logger = logger
         self.signals = signals
+        self.browser = browser
 
         self.turn_off = False
 
@@ -22,9 +23,9 @@ class NMBot():
         self.load_cooldown(browser)
         self.logger.log('starting bot ...')
 
-        if browser == 'chrome':
+        if self.browser == 'chrome':
             self.bot = webdriver.Chrome(executable_path=r'drivers\chromedriver.exe')
-        elif browser == 'firefox':
+        elif self.browser == 'firefox':
             self.bot = webdriver.Firefox(executable_path=r'drivers\geckodriver.exe')
 
         self.logger.log('navigating to ninjamanager.com ...')
@@ -36,6 +37,7 @@ class NMBot():
 
         self.check_gold()
         self.stats['gold_gained'] = 0
+        self.stats['ninjas'] = self.check_ninjas()
 
         self.arena_energy = True
         self.world_energy = True
@@ -49,6 +51,7 @@ class NMBot():
 
         while True:
             try:
+                self.signals.ninja_signal.emit(self.check_ninjas(), self.browser)
                 self.logger.log('\n\n\n\n\n\n')
                 self.check_energy()
 
@@ -285,6 +288,27 @@ class NMBot():
         self.stats['gold_gained'] += (self.stats['gold'] - old_gold)
 
         self.signals.info_signal.emit()
+
+
+
+    def check_ninjas(self) -> dict:
+        # returns a dict with the levels of all our ninjas
+        self.bot.get('https://www.ninjamanager.com/myteam/ninjas')
+        self.slp(5, 10)
+
+        ninja_stats = {}
+        ninja_bar = self.bot.find_element_by_id('ninjas-list')
+        for ninja_box in ninja_bar.find_elements_by_xpath('./div'):
+            ninja_name = ninja_box.find_element_by_xpath('./div[@class="c-ninja-box__details"]/div[@class="c-ninja-box-info"]/div[@class="c-ninja-box-info__top"]/div[@class="c-ninja-box-info__name"]').text
+            ninja_lvl = ninja_box.find_element_by_xpath('./div[@class="c-ninja-box__details"]/div[@class="c-ninja-box__card  m-card-container"]/div/div[@class="c-card__lvl"]/span').text
+            ninja_exp = ninja_box.find_element_by_xpath('./div[@class="c-ninja-box__details"]/div[@class="c-ninja-box__card  m-card-container"]/div/div[@class="c-card__details "]/div[@class="c-card__exp  c-exp"]/div').get_attribute('style')
+            ninja_exp = ninja_exp[7:-1]
+
+            ninja_stats[ninja_name] = ninja_lvl + ' @ ' + ninja_exp
+
+        self.slp(10, 20)
+        return ninja_stats
+
 
 
 

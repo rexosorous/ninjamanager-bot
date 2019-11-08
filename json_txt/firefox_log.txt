@@ -1,0 +1,33 @@
+starting bot ...
+navigating to ninjamanager.com ...
+logging in ...
+login successful
+all checks successful
+starting main loop ...
+
+
+
+
+
+
+
+Arena Energy = 57
+World Energy = 79
+
+
+
+closing bot ...
+
+firefox STATS
+Total Loops:   0
+Gold Gained:   0
+Arena Battles: 0
+World Wins:    0
+World Losses:  0
+Items Gained:
+
+
+
+LOOP #0
+
+starting arena challenges ...

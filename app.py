@@ -13,11 +13,28 @@ import main_ui
 import logger
 import nmbot
 
-# TO DO
-# implement databases
-# error checking for incorrect mission data
-# legendary weapon grinding
 
+'''
+TO DO
+1. keep track of ninja levels (who leveled during our session?)
+2. implement databases
+    1. legendary weapon / bloodline grinding
+        option 1: bot automatically grinds
+            - if the LW is a drop, go for that world mission until item is found
+                - what to do when we find it?
+                - what to do if we don't have access to that world mission?
+                - what to do if we consistently lose the mission?
+            - if the LW/BL is crafted, start accumulating items for it
+                - will need a database to keep track of what items we have
+                - start with most available mission first
+                - forge it?
+                - what to do if a lv. ninja is required? (ex. lv75 nagato needed for crafting)
+        option 2: bot gives you information needed
+            - if the LW is a drop, tell the user where the LW is located and what percentage it is (offer to set mission data to find it)
+            - if the LW/BL is crafted, tell the user which items are needed and where to find them (offer to set mission data to specific item)
+                - allow user to sticky the recipe, locations, etc on the main screen and keep it updated so they can see when they have enough of x item
+3. error checking for incorrect mission data
+'''
 
 
 class GUI():
@@ -60,10 +77,9 @@ class GUI():
         self.gui.firefox_mission_submit.clicked.connect(partial(self.change_mission, 'firefox'))
         self.gui.firefox_cooldown_submit.clicked.connect(partial(self.change_cooldown, 'firefox'))
 
-        # self.loggers['chrome'].log_signal.connect(self.gui_log)
-        # self.loggers['firefox'].log_signal.connect(self.gui_log)
         self.signals.log_signal.connect(self.gui_log)
         self.signals.info_signal.connect(self.update_info)
+        self.signals.ninja_signal.connect(self.update_ninjas)
 
 
 
@@ -246,6 +262,16 @@ class GUI():
 
 
 
+    def update_ninjas(self, ninjas: dict, browser: str):
+        # updates the info on ninja exp in gui
+        ninja_textbox = {'chrome': self.gui.chrome_ninjas, 'firefox': self.gui.firefox_ninjas}
+        ninja_textbox[browser].clear()
+        for nin in ninjas:
+            ninja_textbox[browser].append(nin + ': ' + self.stats[browser]['ninjas'][nin] + ' -> ' + ninjas[nin])
+            ninja_textbox[browser].moveCursor(QTextCursor.End)
+
+
+
 
 
 def get_stats(stats, browser: str):
@@ -282,7 +308,8 @@ if __name__ == "__main__":
             'arena_battles': 0,
             'world_successes': 0,
             'world_losses': 0,
-            'items_gained': {}
+            'items_gained': {},
+            'ninjas': {}
         },
         'firefox': {
             'gold': 0,
@@ -291,7 +318,8 @@ if __name__ == "__main__":
             'arena_battles': 0,
             'world_successes': 0,
             'world_losses': 0,
-            'items_gained': {}
+            'items_gained': {},
+            'ninjas': {}
         }
     }
 
