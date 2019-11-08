@@ -267,8 +267,9 @@ class GUI():
         ninja_textbox = {'chrome': self.gui.chrome_ninjas, 'firefox': self.gui.firefox_ninjas}
         ninja_textbox[browser].clear()
         for nin in ninjas:
-            ninja_textbox[browser].append(nin + ': ' + self.stats[browser]['ninjas'][nin] + ' -> ' + ninjas[nin])
-            ninja_textbox[browser].moveCursor(QTextCursor.End)
+            if ninjas[nin] != self.stats[browser]['ninjas'][nin]:
+                ninja_textbox[browser].append(nin + ': ' + self.stats[browser]['ninjas'][nin] + ' -> ' + ninjas[nin])
+                ninja_textbox[browser].moveCursor(QTextCursor.End)
 
 
 
