@@ -63,6 +63,7 @@ class NMBot():
                         self.arena_actions()
                         self.logger.log('finished arena challenges\n')
                         self.check_gold()
+                        self.signals.ninja_signal.emit(self.check_ninjas(), self.browser)
                         self.slp(self.cooldown_lower, self.cooldown_upper)
                     else:
                         self.logger.log('ARENA out of energy\n')
@@ -72,6 +73,7 @@ class NMBot():
                         self.world_actions()
                         self.logger.log('finished world missions')
                         self.check_gold()
+                        self.signals.ninja_signal.emit(self.check_ninjas(), self.browser)
                     else:
                         self.logger.log('WORLD out of energy')
 

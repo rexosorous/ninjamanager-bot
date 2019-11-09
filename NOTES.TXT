@@ -1,0 +1,97 @@
+LEGENDARY WEAPONS W/ NO RECIPE
+ID  Name    Location    Mission #    % Chance
+
+
+
+LEGENDARY WEAPONS W/ RECIPES   OR   BLOODLINES
+ID  Name            Item            Amount
+1   Icarus' Wings   Angel Feather   3
+2   Icarus' Wings   Arachne Web     4
+3   Icarus' Wings   Demon Wings     20
+4   Icarus' Wings   Elvenskin       10
+
+
+CRAFTED ITEMS
+ID  Name            Item            Amount
+1   Angel Feather   Alkahest        1
+2   Angel Feather   Cursed Feather  10
+3   Angel Feather   Holy Water      3
+4   Holy Water      Alkahest        1
+5   Holy Water      Clear Water     35
+6   Arachne Web     Alkahest        1
+7   Arachne Web     Spider Web      25
+8   Elvenskin       Alkahest        1
+9   Elvenskin       Leather         10
+10  Elvenskin       Zephyr Leaf     2
+
+
+
+BASIC ITEMS
+ID  Name            Location    Mission #   % Chance
+1   Alkahest        Shop        NULL        NULL
+2   Cursed Feather  link        1           25%
+3   Clear Water
+4   Spider Web
+5   Leather
+6   Zephyr Leaf
+7   Sharingan Eye   lv43 Tobi   NULL        NULL ?
+
+
+
+NINJA ITEMS
+ID  Name            Ninja   Amount  Level
+1   Sharingan Eye   Crow    1       10
+2   Sharingan Eye   Tobi    5       43
+
+
+
+
+example end result:
+input Icarus' Wings
+{
+    Alkahest: 26,
+    Cursed Feather: 30,
+    Clear Water: 105,
+    Spider Web: 100,
+    Demon Wing: 20,
+    Leather: 100,
+    Zephyr Leaf: 20
+}
+
+
+input Sharingan
+{
+    Dojutsu Catalyst: 20,
+    Uchiha Blood: 100,
+    Sharingan Eye: 5
+}
+have a script that detects sharingan eye or byakugan eye that gives more info
+
+
+
+
+
+LOOP
+
+for item in LW recipe:
+    if item in crafted items:
+        for item in crafted item recipe:
+            return basic item * crafted recipe amount * LW recipe amount
+    elif item in basic item:
+        return basic item * LW recipe amount
+    elif item in ninjas:
+
+maybe try recursive?
+
+
+def find_recipe(items: dict) -> dict:
+    for i in items:
+        if item in basic_items:
+            return item with amount
+        if item in crafted_items:
+            return find_recipe(crafted_item_recipe)
+        if item in ninjas:
+            return all ninjas resutls + 1x panacea
+        return ninja <-- might have to return level 20 jugo
+
+AT EVERY STEP OF ^ UPDATE GUI INSTEAD OF RETURNING DICT
