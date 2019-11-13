@@ -54,8 +54,8 @@ input Icarus' Wings
     Clear Water: 105,
     Spider Web: 100,
     Demon Wing: 20,
-    Leather: 100,
-    Zephyr Leaf: 20
+    Leather: 120,
+    Zephyr Leaf: 10
 }
 
 

@@ -5,51 +5,59 @@ from time import sleep
 import traceback
 import json
 
+# my modules
 from exceptions import *
-import logger
 
 
 
 class NMBot():
-    def __init__(self, account, cookie, stats, logger, browser: str, signals):
+    def __init__(self, stats, logger, signals, browser: str):
+        # variables received
         self.stats = stats
         self.logger = logger
-        self.signals = signals
         self.browser = browser
+        self.signals = signals
 
+        # variables created
+        self.options = self.get_options(browser)
         self.turn_off = False
-
-        self.load_mission(browser)
-        self.load_cooldown(browser)
-        self.logger.log('starting bot ...')
-
+        self.arena_energy = True
+        self.world_energy = True
+        self.team_blacklist = {'953','965'} # my teams
         if self.browser == 'chrome':
             self.bot = webdriver.Chrome(executable_path=r'drivers\chromedriver.exe')
         elif self.browser == 'firefox':
             self.bot = webdriver.Firefox(executable_path=r'drivers\geckodriver.exe')
 
+        # start
+        self.startup()
+
+
+
+    def startup(self) -> webdriver:
+        # navigate to site
+        self.logger.log('starting bot ...')
         self.logger.log('navigating to ninjamanager.com ...')
         self.bot.get('https://www.ninjamanager.com')
+        self.slp(5, 10)
 
-        self.login(account)
-        self.bot.add_cookie(cookie)
+        # login and add cookies
+        self.login(self.get_account())
+        self.bot.add_cookie(self.get_cookie())
         self.logger.log('all checks successful')
 
+        # init starting stats
         self.check_gold()
         self.stats['gold_gained'] = 0
         self.stats['ninjas'] = self.check_ninjas()
-
-        self.arena_energy = True
-        self.world_energy = True
-
-        self.team_blacklist = {'953','965'} # my teams
+        self.signals.info_signal.emit()
 
 
 
     def execute(self):
         self.logger.log('starting main loop ...')
 
-        while True:
+        while not self.turn_off:
             try:
                 self.signals.ninja_signal.emit(self.check_ninjas(), self.browser)
                 self.logger.log('\n\n\n\n\n\n')
@@ -64,7 +72,7 @@ class NMBot():
                         self.logger.log('finished arena challenges\n')
                         self.check_gold()
                         self.signals.ninja_signal.emit(self.check_ninjas(), self.browser)
-                        self.slp(self.cooldown_lower, self.cooldown_upper)
+                        self.slp(self.options[self.browser]['cooldown']['lower'], self.options[self.browser]['cooldown']['upper'])
                     else:
                         self.logger.log('ARENA out of energy\n')
 
@@ -79,7 +87,7 @@ class NMBot():
 
                     self.stats['loop_count'] += 1
 
-                self.slp(self.cooldown_lower, self.cooldown_upper)
+                self.slp(self.options[self.browser]['cooldown']['lower'], self.options[self.browser]['cooldown']['upper'])
             except Exception as e:
                 if self.turn_off:
                     return
@@ -162,7 +170,7 @@ class NMBot():
     def world_actions(self):
         # all the things we want to do in the world screen
         try:
-            self.bot.get(self.area_url)
+            self.bot.get(self.options[self.browser]['world']['area_url'])
             self.do_mission()
         except OutOfEnergy:
             self.logger.log('RAN OUT OF WORLD ENERGY')
@@ -173,7 +181,7 @@ class NMBot():
         # executes world mission
         try:
             self.slp(10, 20)
-            self.bot.find_element_by_xpath('//div[@data-url="' + self.area_url[self.area_url.find('/world'):] + '/mission/' + self.mission_num + '"]').click() # fight button
+            self.bot.find_element_by_xpath('//div[@data-url="' + self.options[self.browser]['world']['area_url'][self.options[self.browser]['world']['area_url'].find('/world'):] + '/mission/' + self.options[self.browser]['world']['mission_num'] + '"]').click() # fight button
             self.slp(10, 20)
             self.bot.find_element_by_class_name('pm-battle-buttons__skip').click() # skip button
             self.slp(10, 20)
@@ -212,6 +220,34 @@ class NMBot():
 
 
     # GENERAL
+    def get_account(self):
+        with open('json_txt/accounts.json', 'r') as file:
+            accounts = json.load(file)
+        return accounts[self.browser]
+
+
+
+    def get_cookie(self):
+        with open('json_txt/cookies.json', 'r') as file:
+            cookies = json.load(file)
+        return cookies[self.browser]
+
+
+
+    def get_options(self, browser: str) -> dict:
+        # loads all options
+        with open('json_txt/options.json', 'r') as file:
+            data = json.load(file)
+
+        return data
+
+
+
+    def update_options(self, data: dict):
+        self.options = data
+
+
+
     def login(self, account):
         self.logger.log('logging in ...')
         self.bot.find_element_by_class_name('header-inside__account-login').click()
@@ -227,32 +263,6 @@ class NMBot():
             raise LoginFailure
 
         self.logger.log('login successful')
-
-
-
-    def load_mission(self, browser: str):
-        # updates mission data from json file
-        with open('json_txt/options.json', 'r') as file:
-            data = json.load(file)
-
-        self.area_url = data['world'][browser]['area_url']
-        self.mission_num = data['world'][browser]['mission_num']
-
-
-
-    def load_cooldown(self, browser: str):
-        # updates the time between arena and world actions
-        with open('json_txt/options.json', 'r') as file:
-            data = json.load(file)
-
-        self.cooldown_lower = data['cooldown'][browser]['lower']
-        self.cooldown_upper = data['cooldown'][browser]['upper']
-
-
-
-    def slp(self, min: float, max: float):
-        # sleeps for a random amount of time between min and max
-        sleep(uniform(min, max))
 
 
 
@@ -305,12 +315,20 @@ class NMBot():
             ninja_lvl = ninja_box.find_element_by_xpath('./div[@class="c-ninja-box__details"]/div[@class="c-ninja-box__card  m-card-container"]/div/div[@class="c-card__lvl"]/span').text
             ninja_exp = ninja_box.find_element_by_xpath('./div[@class="c-ninja-box__details"]/div[@class="c-ninja-box__card  m-card-container"]/div/div[@class="c-card__details "]/div[@class="c-card__exp  c-exp"]/div').get_attribute('style')
             ninja_exp = ninja_exp[7:-1]
+            if len(ninja_exp) < 3:
+                ninja_exp = '0' + ninja_exp # needed to correctly caluclate exp gained
 
-            ninja_stats[ninja_name] = ninja_lvl + ' @ ' + ninja_exp
+            ninja_stats[ninja_name] = ninja_lvl + '@' + ninja_exp
 
         self.slp(10, 20)
         return ninja_stats
 
+
+
+
+    def slp(self, min: float, max: float):
+        # sleeps for a random amount of time between min and max
+        sleep(uniform(min, max))
 
 
 
@@ -328,4 +346,18 @@ class NMBot():
         # closes the browser
         self.turn_off = True
         self.logger.log('\n\n\nclosing bot ...\n')
+
+        # output stats to the log
+        basic = str('STATS' +
+                  '\nTotal Loops:   ' + str(self.stats['loop_count']) +
+                  '\nGold Gained:   ' + str(self.stats['gold_gained']) +
+                  '\nArena Battles: ' + str(self.stats['arena_battles']) +
+                  '\nWorld Wins:    ' + str(self.stats['world_successes']) +
+                  '\nWorld Losses:  ' + str(self.stats['world_losses']) + '\n')
+        items = 'Items Gained:\n'
+
+        for item in self.stats['items_gained']:
+            items += str('                ' + item + ': ' + str(self.stats['items_gained'][item]) + '\n')
+        self.logger.log(basic + items + '\n\n')
+
         self.bot.quit()
