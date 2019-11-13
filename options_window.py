@@ -31,12 +31,12 @@ class OptionsWindow:
 
     def connect_events(self):
         # chrome
-        self.contents.chrome_mission_submit.clicked.connect(partial(self.change_mission, 'chrome'))
-        self.contents.chrome_cooldown_submit.clicked.connect(partial(self.change_cooldown, 'chrome'))
+        self.contents.chrome_mission_submit.clicked.connect(partial(self.change_mission, self.contents.chrome_area, self.contents.chrome_mission_num, 'chrome'))
+        self.contents.chrome_cooldown_submit.clicked.connect(partial(self.change_cooldown, self.contents.chrome_cooldown_lower, self.contents.chrome_cooldown_upper, 'chrome'))
 
         # firefox
-        self.contents.firefox_mission_submit.clicked.connect(partial(self.change_mission, 'firefox'))
-        self.contents.firefox_cooldown_submit.clicked.connect(partial(self.change_cooldown, 'firefox'))
+        self.contents.firefox_mission_submit.clicked.connect(partial(self.change_mission, self.contents.firefox_area, self.contents.firefox_mission_num, 'firefox'))
+        self.contents.firefox_cooldown_submit.clicked.connect(partial(self.change_cooldown, self.contents.firefox_cooldown_lower, self.contents.firefox_cooldown_upper, 'firefox'))
 
         # general
         self.contents.chrome_dropped_lw.clicked.connect(partial(self.change_mission_lw, 'chrome'))
@@ -119,46 +119,24 @@ class OptionsWindow:
 
 
 
-    def change_mission(self, browser: str):
+    def change_mission(self, gui_area, gui_mission, browser: str):
         # changes which world mission the bot executes
-        gui_picker = {
-            'chrome': {
-                'area': self.contents.chrome_area,
-                'mission': self.contents.chrome_mission_num,
-            },
-            'firefox': {
-                'area': self.contents.firefox_area,
-                'mission': self.contents.firefox_mission_num
-            }
-        }
-
-        area = gui_picker[browser]['area'].displayText()
-        mission = gui_picker[browser]['mission'].displayText()
+        area = gui_area.displayText()
+        mission = gui_mission.displayText()
 
         self.save_mission(area, mission, browser)
 
         # clear fields
-        gui_picker[browser]['area'].clear()
-        gui_picker[browser]['mission'].clear()
+        gui_area.clear()
+        gui_mission.clear()
 
 
 
-    def change_cooldown(self, browser: str):
+    def change_cooldown(self, gui_lower, gui_upper, browser: str):
         # changes the time between arena and world actions in MINUTES
-        gui_picker = {
-            'chrome': {
-                'lower': self.contents.chrome_cooldown_lower,
-                'upper': self.contents.chrome_cooldown_upper,
-            },
-            'firefox': {
-                'lower': self.contents.firefox_cooldown_lower,
-                'upper': self.contents.firefox_cooldown_upper
-            }
-        }
-
         try:
-            lower = float(gui_picker[browser]['lower'].displayText()) * 60
-            upper = float(gui_picker[browser]['upper'].displayText()) * 60
+            lower = float(gui_lower.displayText()) * 60
+            upper = float(gui_upper.displayText()) * 60
         except ValueError:
             return
 
@@ -176,8 +154,8 @@ class OptionsWindow:
             self.signals.options_msg_signal.emit(f'cooldown changed to {lower} - {upper} minutes', browser)
 
             # clear fields
-            gui_picker[browser]['lower'].clear()
-            gui_picker[browser]['upper'].clear()
+            gui_lower.clear()
+            gui_upper.clear()
 
 
 

@@ -41,18 +41,18 @@ class MainWindow:
 
     def connect_events(self):
         # chrome
-        self.contents.chrome_item_toggle.clicked.connect(partial(self.toggle_item, 'chrome'))
+        self.contents.chrome_item_toggle.clicked.connect(partial(self.toggle_item, self.contents.chrome_item_frame))
         self.contents.chrome_start.clicked.connect(partial(self.start, 'chrome'))
         self.contents.chrome_stop.clicked.connect(partial(self.stop, 'chrome'))
-        self.contents.chrome_items.currentItemChanged.connect(partial(self.display_location, 'chrome'))
-        self.contents.chrome_world_shortcut.clicked.connect(partial(self.change_mission, 'chrome'))
+        self.contents.chrome_items.currentItemChanged.connect(partial(self.display_location, self.contents.chrome_locations))
+        self.contents.chrome_world_shortcut.clicked.connect(partial(self.change_mission, self.contents.chrome_locations))
 
         # firefox
-        self.contents.firefox_item_toggle.clicked.connect(partial(self.toggle_item, 'firefox'))
+        self.contents.firefox_item_toggle.clicked.connect(partial(self.toggle_item, self.contents.firefox_item_frame))
         self.contents.firefox_start.clicked.connect(partial(self.start, 'firefox'))
         self.contents.firefox_stop.clicked.connect(partial(self.stop, 'firefox'))
-        self.contents.firefox_items.currentItemChanged.connect(partial(self.display_location, 'firefox'))
-        self.contents.firefox_world_shortcut.clicked.connect(partial(self.change_mission, 'firefox'))
+        self.contents.firefox_items.currentItemChanged.connect(partial(self.display_location, self.contents.firefox_locations))
+        self.contents.firefox_world_shortcut.clicked.connect(partial(self.change_mission, self.contents.firefox_locations))
 
         # signals
         self.signals.log_signal.connect(self.main_log)
@@ -182,13 +182,12 @@ class MainWindow:
 
 
 
-    def toggle_item(self, browser: str):
+    def toggle_item(self, gui_object):
         # shows and hides the item helper in main window
-        item_frame_picker = {'chrome': self.contents.chrome_item_frame, 'firefox': self.contents.firefox_item_frame}
-        if item_frame_picker[browser].isVisible():
-            item_frame_picker[browser].hide()
+        if gui_object.isVisible():
+            gui_object.hide()
         else:
-            item_frame_picker[browser].show()
+            gui_object.show()
 
 
 
@@ -284,16 +283,11 @@ class MainWindow:
 
 
 
-    def display_location(self, browser: str, table_item, old_item):
+    def display_location(self, gui_object, table_item, old_item):
         # when user clicks on a basic item, display where you can get it
-        gui_picker = {
-            'chrome': self.contents.chrome_locations,
-            'firefox': self.contents.firefox_locations
-        }
-
         # clear the table
         for row in range(gui_picker[browser].rowCount()):
-            gui_picker[browser].removeRow(0)
+            gui_object.removeRow(0)
 
         # get data
         item_name = table_item.text()[:table_item.text().find(':')]
@@ -301,23 +295,18 @@ class MainWindow:
 
         # populate table
         for row in range(len(all_locations)):
-            gui_picker[browser].insertRow(row)
-            gui_picker[browser].setItem(row, 0, QtWidgets.QTableWidgetItem(util.fix_location(all_locations[row])))
-            gui_picker[browser].setItem(row, 1, QtWidgets.QTableWidgetItem(all_locations[row]['chance']))
-            gui_picker[browser].setItem(row, 2, QtWidgets.QTableWidgetItem(all_locations[row]['location']))
-            gui_picker[browser].setItem(row, 3, QtWidgets.QTableWidgetItem(all_locations[row]['mission']))
+            gui_object.insertRow(row)
+            gui_object.setItem(row, 0, QtWidgets.QTableWidgetItem(util.fix_location(all_locations[row])))
+            gui_object.setItem(row, 1, QtWidgets.QTableWidgetItem(all_locations[row]['chance']))
+            gui_object.setItem(row, 2, QtWidgets.QTableWidgetItem(all_locations[row]['location']))
+            gui_object.setItem(row, 3, QtWidgets.QTableWidgetItem(all_locations[row]['mission']))
 
 
 
-    def change_mission(self, browser):
-        gui_picker = {
-            'chrome': self.contents.chrome_locations,
-            'firefox': self.contents.firefox_locations
-        }
-
-        row = gui_picker[browser].currentRow()
-        url = gui_picker[browser].item(row, 2).text()
-        mission = gui_picker[browser].item(row, 3).text()
+    def change_mission(self, gui_object):
+        row = gui_object.currentRow()
+        url = gui_object.item(row, 2).text()
+        mission = gui_object.item(row, 3).text()
 
         data = util.get_options()
         data[browser]['world']['area_url'] = url
