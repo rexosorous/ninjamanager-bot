@@ -1,28 +1,21 @@
 from PyQt5.QtWidgets import QApplication
 from sys import exit
+import traceback
 import os
 
 # my modules
+import general.db_handler as db_handler
+import general.signals as signals
+import general.logger as logger
 import options_window
 import main_window
-import db_handler
-import traceback
-import signals
-import logger
 
 
 '''
 TO DO
-* give options_window.py access to logger
+* replace gui_picker with just sending the functions the object they need
 * when item toggles, change sizehint and resize properly
-* change change_mission_lw() in options_window.py to use a generic function of change_mission()
-* load all options.json data before and pass them to objects that need them
-* replace gui_picker with just sending the functions the objec they need
-* make a util.py and put in fix_location
 * make tables sortable
-* use for key, value in dict
-* rename options.json to config.json
-* organize files
 * add chrome and firefox icons
 '''
 

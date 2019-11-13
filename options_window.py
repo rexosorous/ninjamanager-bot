@@ -1,9 +1,10 @@
-from PyQt5.QtCore import Qt
 from functools import partial
+from PyQt5.QtCore import Qt
 from PyQt5 import QtWidgets
-import json
 
-import options_ui
+# my modules
+import GUI.options_ui as options_ui
+import general.utilities as util
 
 
 class OptionsWindow:
@@ -18,21 +19,13 @@ class OptionsWindow:
         self.db = db
 
         # variables created
-        self.options = self.get_options_data()
+        self.options = util.get_options()
 
         # init
         self.connect_events()
         self.ui_changes()
         self.fill_fields()
         self.populate_tables()
-
-
-
-    def get_options_data(self) -> dict:
-        with open('json_txt/options.json', 'r') as file:
-            data = json.load(file)
-
-        return data
 
 
 
@@ -91,7 +84,7 @@ class OptionsWindow:
         for lw in dropped_lws:
             self.contents.dropped_lw.insertRow(row)
             self.contents.dropped_lw.setItem(row, 0, QtWidgets.QTableWidgetItem(lw))
-            self.contents.dropped_lw.setItem(row, 1, QtWidgets.QTableWidgetItem(self.fix_location(dropped_lws[lw])))
+            self.contents.dropped_lw.setItem(row, 1, QtWidgets.QTableWidgetItem(util.fix_location(dropped_lws[lw])))
             self.contents.dropped_lw.setItem(row, 2, QtWidgets.QTableWidgetItem(dropped_lws[lw]['chance']))
         self.contents.dropped_lw.sortItems(0)
 
@@ -106,6 +99,23 @@ class OptionsWindow:
         self.contents.crafted_bl.sortItems()
 
 
+
+
+
+    def save_mission(self, area: str, mission: str, browser: str):
+        # changes the world mission
+        if area and mission: # make sure they're not empty strings
+            # save to file
+            data = util.get_options()
+            data[browser]['world']['area_url'] = area
+            data[browser]['world']['mission_num'] = mission
+            util.save_options(data)
+
+            # update data
+            self.signals.options_signal.emit(data)
+
+            # log
+            self.signals.options_msg_signal.emit(f'mission changed to {util.fix_location(data)}', browser)
 
 
 
@@ -125,21 +135,11 @@ class OptionsWindow:
         area = gui_picker[browser]['area'].displayText()
         mission = gui_picker[browser]['mission'].displayText()
 
-        if area and mission: # make sure the fields at least have text in them
-            # save to file
-            with open('json_txt/options.json', 'r') as file:
-                data = json.load(file)
-            data[browser]['world']['area_url'] = area
-            data[browser]['world']['mission_num'] = mission
-            with open('json_txt/options.json', 'w') as file:
-                json.dump(data, file)
+        self.save_mission(area, mission, browser)
 
-            # update data
-            self.signals.options_signal.emit(data)
-
-            # clear fields
-            gui_picker[browser]['area'].clear()
-            gui_picker[browser]['mission'].clear()
+        # clear fields
+        gui_picker[browser]['area'].clear()
+        gui_picker[browser]['mission'].clear()
 
 
 
@@ -164,15 +164,16 @@ class OptionsWindow:
 
         if lower and upper: # make sure the fields at least have text in them
             # save to file
-            with open('json_txt/options.json', 'r') as file:
-                data = json.load(file)
+            data = util.get_options()
             data[browser]['cooldown']['lower'] = lower
             data[browser]['cooldown']['upper'] = upper
-            with open('json_txt/options.json', 'w') as file:
-                json.dump(data, file)
+            util.save_options(data)
 
             # update data
             self.signals.options_signal.emit(data)
+
+            # log
+            self.signals.options_msg_signal.emit(f'cooldown changed to {lower} - {upper} minutes', browser)
 
             # clear fields
             gui_picker[browser]['lower'].clear()
@@ -182,19 +183,13 @@ class OptionsWindow:
 
     def change_mission_lw(self, browser):
         # sets the world mission to the highlighted item in dropped lw list
-        selected_row = self.contents.dropped_lw.selectedItems() # maybe currentItem() or currentRow()?
+        selected_row = self.contents.dropped_lw.selectedItems()
 
-        with open('json_txt/options.json', 'r') as file:
-            data = json.load(file)
-        fix_me = selected_row[1].text()
-        fixed_area = fix_me[:fix_me.find('#')-1].replace(' ', '-')
-        fixed_mission = fix_me[fix_me.find('#')+1:]
-        data[browser]['world']['area_url'] = 'https://www.ninjamanager.com/world/area/' + fixed_area
-        data[browser]['world']['mission_num'] = fixed_mission
-        with open('json_txt/options.json', 'w') as file:
-            json.dump(data, file)
-
-        self.signals.options_signal.emit(data)
+        raw = selected_row[1].text()
+        area = 'https://www.ninjamanager.com/world/area/' + raw[:raw.find('#')-1].replace(' ', '-')
+        mission = raw[raw.find('#')+1:]
+        
+        self.save_mission(area, mission, browser)
 
 
 
@@ -224,7 +219,7 @@ class OptionsWindow:
 
     def update_area(self, data: dict):
         # updates required area access
-        area = self.fix_location(data)
+        area = util.fix_location(data)
         if not self.contents.areas.findItems(area, Qt.MatchExactly):
             self.contents.areas.addItem(area)
 
@@ -255,20 +250,8 @@ class OptionsWindow:
         self.signals.pin_signal.emit(transfer, browser)
 
         # save so we don't have to keep selecting the LW every time we open the program
-        with open('json_txt/options.json', 'r') as file:
-            data = json.load(file)
+        data = util.get_options()
         data[browser]['LW'] = transfer['recipe'].text(0)
-        with open('json_txt/options.json', 'w') as file:
-            json.dump(data, file)
+        util.save_options(data)
 
         self.options = data
-
-
-
-    def fix_location(self, item_data: dict) -> str:
-        # makes the locations easier to read
-        location = item_data['location']
-        if 'Shop' in location:
-            return location
-        location = location[location.find('area')+5:].replace('-', ' ')
-        return location + ' #' + item_data['mission']

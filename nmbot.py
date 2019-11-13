@@ -3,10 +3,10 @@ from selenium import webdriver
 from random import uniform
 from time import sleep
 import traceback
-import json
 
 # my modules
-from exceptions import *
+import general.utilities as util
+from general.exceptions import *
 
 
 
@@ -19,11 +19,10 @@ class NMBot():
         self.signals = signals
 
         # variables created
-        self.options = self.get_options(browser)
+        self.options = util.get_options()
         self.turn_off = False
         self.arena_energy = True
         self.world_energy = True
-        self.team_blacklist = {'953','965'} # my teams
         if self.browser == 'chrome':
             self.bot = webdriver.Chrome(executable_path=r'drivers\chromedriver.exe')
         elif self.browser == 'firefox':
@@ -42,8 +41,8 @@ class NMBot():
         self.slp(5, 10)
 
         # login and add cookies
-        self.login(self.get_account())
-        self.bot.add_cookie(self.get_cookie())
+        self.login(util.get_account(self.browser))
+        self.bot.add_cookie(util.get_cookie(self.browser))
         self.logger.log('all checks successful')
 
         # init starting stats
@@ -220,29 +219,6 @@ class NMBot():
 
 
     # GENERAL
-    def get_account(self):
-        with open('json_txt/accounts.json', 'r') as file:
-            accounts = json.load(file)
-        return accounts[self.browser]
-
-
-
-    def get_cookie(self):
-        with open('json_txt/cookies.json', 'r') as file:
-            cookies = json.load(file)
-        return cookies[self.browser]
-
-
-
-    def get_options(self, browser: str) -> dict:
-        # loads all options
-        with open('json_txt/options.json', 'r') as file:
-            data = json.load(file)
-
-        return data
-
-
-
     def update_options(self, data: dict):
         self.options = data
 

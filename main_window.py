@@ -3,11 +3,11 @@ from functools import partial
 from PyQt5.QtCore import Qt
 from PyQt5 import QtWidgets
 import threading
-import json
 
 # my modules
-from exceptions import *
-import main_ui
+from general.exceptions import *
+import general.utilities as util
+import GUI.main_ui as main_ui
 import nmbot
 
 
@@ -60,6 +60,7 @@ class MainWindow:
         self.signals.ninja_signal.connect(self.update_ninjas)
         self.signals.options_signal.connect(self.update_options)
         self.signals.pin_signal.connect(self.pin_recipe)
+        self.signals.options_msg_signal.connect(self.log)
 
 
 
@@ -93,10 +94,9 @@ class MainWindow:
 
 
     def init_recipe(self):
-        # fills the item helper areas from data in options.json
+        # fills the item helper areas from data in config.json
         # get data
-        with open('json_txt/options.json', 'r') as file:
-            data = json.load(file)
+        data = util.get_options()
 
         table_picker = {
             'chrome': self.contents.chrome_items,
@@ -235,17 +235,16 @@ class MainWindow:
             ninja_table[browser].removeRow(0)
 
         row = 0
-        for nin in ninjas:
-            if ninjas[nin] != self.stats[browser]['ninjas'][nin]:
-                old = self.stats[browser]['ninjas'][nin]
-                new = ninjas[nin]
+        for name, lvl in ninjas:
+            if lvl != self.stats[browser]['ninjas'][name]:
+                old = self.stats[browser]['ninjas'][name]
 
                 old_lvl = old[:old.find('@')]
                 old_exp = old[old.find('@')+1:]
                 old_total = int(old_lvl + old_exp[:-1])
 
-                new_lvl = new[:new.find('@')]
-                new_exp = new[new.find('@')+1:]
+                new_lvl = lvl[:lvl.find('@')]
+                new_exp = lvl[lvl.find('@')+1:]
                 new_total = int(new_lvl + new_exp[:-1])
 
                 output = '{0:<15}  gained {1}% -> lv{2:}@{3:}'.format(nin, new_total-old_total, new_lvl, new_exp)
@@ -303,7 +302,7 @@ class MainWindow:
         # populate table
         for row in range(len(all_locations)):
             gui_picker[browser].insertRow(row)
-            gui_picker[browser].setItem(row, 0, QtWidgets.QTableWidgetItem(self.fix_location(all_locations[row])))
+            gui_picker[browser].setItem(row, 0, QtWidgets.QTableWidgetItem(util.fix_location(all_locations[row])))
             gui_picker[browser].setItem(row, 1, QtWidgets.QTableWidgetItem(all_locations[row]['chance']))
             gui_picker[browser].setItem(row, 2, QtWidgets.QTableWidgetItem(all_locations[row]['location']))
             gui_picker[browser].setItem(row, 3, QtWidgets.QTableWidgetItem(all_locations[row]['mission']))
@@ -320,28 +319,14 @@ class MainWindow:
         url = gui_picker[browser].item(row, 2).text()
         mission = gui_picker[browser].item(row, 3).text()
 
-        with open('json_txt/options.json', 'r') as file:
-            data = json.load(file)
+        data = util.get_options()
         data[browser]['world']['area_url'] = url
         data[browser]['world']['mission_num'] = mission
-        with open('json_txt/options.json', 'w') as file:
-            json.dump(data, file)
+        util.save_options(data)
 
         self.signals.options_signal.emit(data)
 
 
 
-
-
-
-
-
-############# GENERAL #############
-
-    def fix_location(self, item_data: dict) -> str:
-        # makes the locations easier to read
-        location = item_data['location']
-        if 'Shop' in location:
-            return location
-        location = location[location.find('area')+5:].replace('-', ' ')
-        return location + ' #' + item_data['mission']
+    def log(self, msg: str, browser: str):
+        self.loggers[browser].log(msg)

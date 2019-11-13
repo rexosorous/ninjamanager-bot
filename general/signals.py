@@ -9,3 +9,4 @@ class Signals(QObject):
     area_signal = pyqtSignal(dict)
     recipe_signal = pyqtSignal(str, str, int)
     pin_signal = pyqtSignal(dict, str)
+    options_msg_signal = pyqtSignal(str, str)
