@@ -21,6 +21,7 @@ class NMBot():
         # variables created
         self.options = util.get_options()
         self.turn_off = False
+        self.logged_in = False
         self.arena_energy = True
         self.world_energy = True
         if self.browser == 'chrome':
@@ -46,9 +47,12 @@ class NMBot():
         self.logger.log('all checks successful')
 
         # init starting stats
-        self.check_gold()
-        self.stats['gold_gained'] = 0
-        self.stats['ninjas'] = self.check_ninjas()
+        # don't init stats if the user stops and starts the bot again
+        if self.stats['gold_gained'] == 0:
+            self.check_gold()
+            self.stats['gold_gained'] = 0
+        if not self.stats['ninjas']:
+            self.stats['ninjas'] = self.check_ninjas()
         self.signals.info_signal.emit()
 
 
@@ -58,6 +62,8 @@ class NMBot():
 
         while not self.turn_off:
             try:
+                if not self.logged_in:
+                    self.login(util.get_account(self.browser))
                 self.signals.ninja_signal.emit(self.check_ninjas(), self.browser)
                 self.logger.log('\n\n\n\n\n\n')
                 self.check_energy()
@@ -87,9 +93,24 @@ class NMBot():
                     self.stats['loop_count'] += 1
 
                 self.slp(self.options[self.browser]['cooldown']['lower'], self.options[self.browser]['cooldown']['upper'])
+            except LoginFailure:
+                self.logger.log('error logging in')
+                self.logger.log('will try to relog in 15 minutes')
+                sleep(15*60)
             except Exception as e:
                 if self.turn_off:
                     return
+
+                self.bot.get('https://www.ninjamanager.com/world')
+
+                if 'Error' in self.bot.title:
+                    error_msg = self.bot.find_element_by_class_name('c-page-header__desc')
+                    if 'logged in' in error_msg.find_element_by_xpath('./a').text:
+                        self.logger.log('error - not logged in')
+                        self.logger.log('will try to relog in 15 minutes')
+                        self.logged_in = False
+                        sleep(15*60)
+                        continue
 
                 self.logger.log('\n\n\n\n\n\n')
                 self.logger.log('error during main loop. will try to restart after 15 minutes')
@@ -97,8 +118,8 @@ class NMBot():
                 self.logger.log('error:')
                 self.logger.log('%s' % e)
                 self.logger.log(traceback.format_exc())
-                self.goto('home')
-                sleep(900) # 15 minutes
+                self.bot.get('https://www.ninjamanager.com')
+                sleep(15*60)
 
 
 
@@ -128,7 +149,7 @@ class NMBot():
         for ch in challengers:
             try:
                 team = ch.get_attribute('data-teamid')
-                if team in rematch or team in self.team_blacklist:
+                if team in rematch:
                     continue
                 self.slp(1, 5) # 1 to 5 seconds
                 ch.click()
@@ -239,6 +260,7 @@ class NMBot():
             raise LoginFailure
 
         self.logger.log('login successful')
+        self.logged_in = True
 
 
 
@@ -267,15 +289,18 @@ class NMBot():
 
     def check_gold(self):
         # checks how much gold we have and how much gold we've earned
-        gold_bar = self.bot.find_element_by_class_name('header-team__resource-gold')
-        gold_amt = gold_bar.find_element_by_xpath('./span').text
-        gold_amt = gold_amt.replace(',', '')
+        try:
+            gold_bar = self.bot.find_element_by_class_name('header-team__resource-gold')
+            gold_amt = gold_bar.find_element_by_xpath('./span').text
+            gold_amt = gold_amt.replace(',', '')
 
-        old_gold = self.stats['gold']
-        self.stats['gold'] = int(gold_amt)
-        self.stats['gold_gained'] += (self.stats['gold'] - old_gold)
+            old_gold = self.stats['gold']
+            self.stats['gold'] = int(gold_amt)
+            self.stats['gold_gained'] += (self.stats['gold'] - old_gold)
 
-        self.signals.info_signal.emit()
+            self.signals.info_signal.emit()
+        except (NoSuchElementException, ElementClickInterceptedException):
+            self.logger.log('unable to check gold amount')
 
 
 
@@ -288,11 +313,13 @@ class NMBot():
         ninja_bar = self.bot.find_element_by_id('ninjas-list')
         for ninja_box in ninja_bar.find_elements_by_xpath('./div'):
             ninja_name = ninja_box.find_element_by_xpath('./div[@class="c-ninja-box__details"]/div[@class="c-ninja-box-info"]/div[@class="c-ninja-box-info__top"]/div[@class="c-ninja-box-info__name"]').text
+            if ninja_name in ninja_stats.keys():
+                ninja_name = ninja_name + ' 2'
             ninja_lvl = ninja_box.find_element_by_xpath('./div[@class="c-ninja-box__details"]/div[@class="c-ninja-box__card  m-card-container"]/div/div[@class="c-card__lvl"]/span').text
             ninja_exp = ninja_box.find_element_by_xpath('./div[@class="c-ninja-box__details"]/div[@class="c-ninja-box__card  m-card-container"]/div/div[@class="c-card__details "]/div[@class="c-card__exp  c-exp"]/div').get_attribute('style')
             ninja_exp = ninja_exp[7:-1]
             if len(ninja_exp) < 3:
-                ninja_exp = '0' + ninja_exp # needed to correctly caluclate exp gained
+                ninja_exp = '0' + ninja_exp # needed to correctly calculate exp gained
 
             ninja_stats[ninja_name] = ninja_lvl + '@' + ninja_exp
 
@@ -322,6 +349,7 @@ class NMBot():
         # closes the browser
         self.turn_off = True
         self.logger.log('\n\n\nclosing bot ...\n')
+        self.check_gold()
 
         # output stats to the log
         basic = str('STATS' +

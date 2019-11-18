@@ -151,7 +151,7 @@ class OptionsWindow:
             self.signals.options_signal.emit(data)
 
             # log
-            self.signals.options_msg_signal.emit(f'cooldown changed to {lower} - {upper} minutes', browser)
+            self.signals.options_msg_signal.emit(f'cooldown changed to {lower/60} - {upper/60} minutes', browser)
 
             # clear fields
             gui_lower.clear()
@@ -166,7 +166,7 @@ class OptionsWindow:
         raw = selected_row[1].text()
         area = 'https://www.ninjamanager.com/world/area/' + raw[:raw.find('#')-1].replace(' ', '-')
         mission = raw[raw.find('#')+1:]
-        
+
         self.save_mission(area, mission, browser)
 
 

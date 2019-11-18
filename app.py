@@ -13,7 +13,8 @@ import main_window
 
 '''
 TO DO
-* replace gui_picker with just sending the functions the object they need
+* handle loss of internet somehow
+* build a better system to stop the bot
 * when item toggles, change sizehint and resize properly
 * make tables sortable
 * add chrome and firefox icons

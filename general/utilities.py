@@ -26,7 +26,7 @@ def get_options() -> dict:
 
 def save_options(data: dict):
     # saves options
-    with open('json_txt/config.json', 'r') as file:
+    with open('json_txt/config.json', 'w') as file:
         json.dump(data, file)
 
 

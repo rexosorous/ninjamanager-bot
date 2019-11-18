@@ -45,14 +45,14 @@ class MainWindow:
         self.contents.chrome_start.clicked.connect(partial(self.start, 'chrome'))
         self.contents.chrome_stop.clicked.connect(partial(self.stop, 'chrome'))
         self.contents.chrome_items.currentItemChanged.connect(partial(self.display_location, self.contents.chrome_locations))
-        self.contents.chrome_world_shortcut.clicked.connect(partial(self.change_mission, self.contents.chrome_locations))
+        self.contents.chrome_world_shortcut.clicked.connect(partial(self.change_mission, self.contents.chrome_locations, 'chrome'))
 
         # firefox
         self.contents.firefox_item_toggle.clicked.connect(partial(self.toggle_item, self.contents.firefox_item_frame))
         self.contents.firefox_start.clicked.connect(partial(self.start, 'firefox'))
         self.contents.firefox_stop.clicked.connect(partial(self.stop, 'firefox'))
         self.contents.firefox_items.currentItemChanged.connect(partial(self.display_location, self.contents.firefox_locations))
-        self.contents.firefox_world_shortcut.clicked.connect(partial(self.change_mission, self.contents.firefox_locations))
+        self.contents.firefox_world_shortcut.clicked.connect(partial(self.change_mission, self.contents.firefox_locations, 'firefox'))
 
         # signals
         self.signals.log_signal.connect(self.main_log)
@@ -175,7 +175,6 @@ class MainWindow:
 
     def stop(self, browser: str):
         if browser in self.browsers.keys():
-            self.browsers[browser].check_gold()
             self.browsers[browser].stop()
             self.signals.info_signal.emit()
             del self.browsers[browser]
@@ -234,7 +233,7 @@ class MainWindow:
             ninja_table[browser].removeRow(0)
 
         row = 0
-        for name, lvl in ninjas:
+        for name, lvl in ninjas.items():
             if lvl != self.stats[browser]['ninjas'][name]:
                 old = self.stats[browser]['ninjas'][name]
 
@@ -246,9 +245,8 @@ class MainWindow:
                 new_exp = lvl[lvl.find('@')+1:]
                 new_total = int(new_lvl + new_exp[:-1])
 
-                output = '{0:<15}  gained {1}% -> lv{2:}@{3:}'.format(nin, new_total-old_total, new_lvl, new_exp)
                 ninja_table[browser].insertRow(row)
-                ninja_table[browser].setItem(row, 0, QtWidgets.QTableWidgetItem(nin))
+                ninja_table[browser].setItem(row, 0, QtWidgets.QTableWidgetItem(name))
                 ninja_table[browser].setItem(row, 1, QtWidgets.QTableWidgetItem('lv.' + new_lvl + '@' + new_exp))
                 ninja_table[browser].setItem(row, 2, QtWidgets.QTableWidgetItem(str(new_total-old_total) + '%'))
 
@@ -286,7 +284,7 @@ class MainWindow:
     def display_location(self, gui_object, table_item, old_item):
         # when user clicks on a basic item, display where you can get it
         # clear the table
-        for row in range(gui_picker[browser].rowCount()):
+        for row in range(gui_object.rowCount()):
             gui_object.removeRow(0)
 
         # get data
@@ -303,7 +301,7 @@ class MainWindow:
 
 
 
-    def change_mission(self, gui_object):
+    def change_mission(self, gui_object, browser: str):
         row = gui_object.currentRow()
         url = gui_object.item(row, 2).text()
         mission = gui_object.item(row, 3).text()
