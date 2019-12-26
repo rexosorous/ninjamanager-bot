@@ -33,10 +33,12 @@ class OptionsWindow:
         # chrome
         self.contents.chrome_mission_submit.clicked.connect(partial(self.change_mission, self.contents.chrome_area, self.contents.chrome_mission_num, 'chrome'))
         self.contents.chrome_cooldown_submit.clicked.connect(partial(self.change_cooldown, self.contents.chrome_cooldown_lower, self.contents.chrome_cooldown_upper, 'chrome'))
+        self.contents.chrome_repeat_submit.clicked.connect(partial(self.change_repeat, self.contents.chrome_repeat, 'chrome'))
 
         # firefox
         self.contents.firefox_mission_submit.clicked.connect(partial(self.change_mission, self.contents.firefox_area, self.contents.firefox_mission_num, 'firefox'))
         self.contents.firefox_cooldown_submit.clicked.connect(partial(self.change_cooldown, self.contents.firefox_cooldown_lower, self.contents.firefox_cooldown_upper, 'firefox'))
+        self.contents.firefox_repeat_submit.clicked.connect(partial(self.change_repeat, self.contents.firefox_repeat, 'firefox'))
 
         # general
         self.contents.chrome_dropped_lw.clicked.connect(partial(self.change_mission_lw, 'chrome'))
@@ -70,10 +72,12 @@ class OptionsWindow:
         self.contents.chrome_area_label.setText(self.options['chrome']['world']['area_url'])
         self.contents.chrome_mission_label.setText(self.options['chrome']['world']['mission_num'])
         self.contents.chrome_cooldown_label.setText(str(self.options['chrome']['cooldown']['lower']/60) + ' - ' + str(self.options['chrome']['cooldown']['upper']/60) + ' minutes')
+        self.contents.chrome_repeat_label.setText(str(self.options['chrome']['world']['repeat']))
 
         self.contents.firefox_area_label.setText(self.options['firefox']['world']['area_url'])
         self.contents.firefox_mission_label.setText(self.options['firefox']['world']['mission_num'])
         self.contents.firefox_cooldown_label.setText(str(self.options['firefox']['cooldown']['lower']/60) + ' - ' + str(self.options['firefox']['cooldown']['upper']/60) + ' minutes')
+        self.contents.firefox_repeat_label.setText(str(self.options['firefox']['world']['repeat']))
 
 
 
@@ -168,6 +172,30 @@ class OptionsWindow:
         mission = raw[raw.find('#')+1:]
 
         self.save_mission(area, mission, browser)
+
+
+
+    def change_repeat(self, gui, browser: str):
+        # changes how many times the world missions are repeated
+        try:
+            new_repeat = int(gui.displayText())
+        except ValueError:
+            return
+
+        if new_repeat: # make sure the fields at least have text in them
+            # save to file
+            data = util.get_options()
+            data[browser]['world']['repeat'] = new_repeat
+            util.save_options(data)
+
+            # update data
+            self.signals.options_signal.emit(data)
+
+            # log
+            self.signals.options_msg_signal.emit(f'repeat changed to {new_repeat}', browser)
+
+            # clear fields
+            gui.clear()
 
 
 

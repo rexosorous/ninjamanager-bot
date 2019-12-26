@@ -13,6 +13,8 @@ import main_window
 
 '''
 TO DO
+* implement multiprocessessing instead of threading
+* implement logging module
 * handle loss of internet somehow
 * build a better system to stop the bot
 * when item toggles, change sizehint and resize properly
