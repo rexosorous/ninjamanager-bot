@@ -85,7 +85,7 @@ class NMBot():
                         self.logger.log('starting world missions ...')
                         for i in range(self.options[self.browser]['world']['repeat']):
                             self.world_actions()
-                            self.slp(self.slp(10, 30))
+                            self.slp(10, 30)
                         self.logger.log('finished world missions')
                         self.check_gold()
                         self.signals.ninja_signal.emit(self.check_ninjas(), self.browser)
