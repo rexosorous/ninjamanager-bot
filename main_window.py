@@ -273,11 +273,17 @@ class MainWindow:
             }
         }
 
+        # clear the containers
+        gui_picker[browser]['recipe'].clear()
+        gui_picker[browser]['items'].clear()
+
+        # add the full recipe
         gui_picker[browser]['recipe'].addTopLevelItem(data['recipe'])
         gui_picker[browser]['recipe'].expandAll()
 
-        gui_picker['chrome']['items'].addItem(data['chrome']['items'])
-        gui_picker['firefox']['items'].addItem(data['firefox']['items'])
+        # add the basic items
+        for item in data['items']:
+            gui_picker[browser]['items'].addItem(item)
 
 
 
