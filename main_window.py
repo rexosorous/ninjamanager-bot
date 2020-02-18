@@ -352,6 +352,7 @@ class MainWindow:
         util.save_options(data)
 
         self.signals.options_signal.emit(data)
+        self.log(f'mission changed to {url}/{mission}', browser)
 
 
 

@@ -119,7 +119,7 @@ class OptionsWindow:
             self.signals.options_signal.emit(data)
 
             # log
-            self.signals.options_msg_signal.emit(f'mission changed to {util.fix_location(data)}', browser)
+            self.signals.options_msg_signal.emit(f'mission changed to {area}/{mission}', browser)
 
 
 

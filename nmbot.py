@@ -49,14 +49,19 @@ class NMBot():
 
         # init starting stats
         # don't init stats if the user stops and starts the bot again
+        self.logger.log('initializing data ...')
+        self.logger.log('initializing gold ...')
         if self.stats['gold_gained'] == 0:
             self.check_gold()
             self.stats['gold_gained'] = 0
+        self.logger.log('initializing ninja exp ...')
         if not self.stats['ninjas']:
             self.stats['ninjas'] = self.check_ninjas()
         self.signals.info_signal.emit()
         self.signals.error_signal.emit(self.errors, self.browser)
+        self.logger.log('initializing crafting items ...')
         self.signals.item_signal.emit(self.check_items(), self.browser)
+        self.logger.log('initializations complete')
 
 
 
