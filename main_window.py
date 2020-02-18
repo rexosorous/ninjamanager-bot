@@ -61,6 +61,7 @@ class MainWindow:
         self.signals.options_signal.connect(self.update_options)
         self.signals.pin_signal.connect(self.pin_recipe)
         self.signals.options_msg_signal.connect(self.log)
+        self.signals.error_signal.connect(self.update_error_count)
 
 
 
@@ -323,3 +324,13 @@ class MainWindow:
 
     def log(self, msg: str, browser: str):
         self.loggers[browser].log(msg)
+
+
+
+    def update_error_count(self, count: int, browser: str):
+        gui_picker = {
+            'chrome': self.contents.chrome_error_count,
+            'firefox': self.contents.firefox_error_count
+        }
+
+        gui_picker[browser].setText(str(count))

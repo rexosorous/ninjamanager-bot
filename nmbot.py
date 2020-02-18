@@ -19,6 +19,7 @@ class NMBot():
         self.signals = signals
 
         # variables created
+        self.errors = 0
         self.options = util.get_options()
         self.turn_off = False
         self.logged_in = False
@@ -54,6 +55,7 @@ class NMBot():
         if not self.stats['ninjas']:
             self.stats['ninjas'] = self.check_ninjas()
         self.signals.info_signal.emit()
+        self.signals.error_signal.emit(self.errors, self.browser)
 
 
 
@@ -96,6 +98,8 @@ class NMBot():
 
                 self.slp(self.options[self.browser]['cooldown']['lower'], self.options[self.browser]['cooldown']['upper'])
             except LoginFailure:
+                self.errors += 1
+                self.signals.error_signal.emit(self.errors, self.browser)
                 self.logger.log('error logging in')
                 self.logger.log('will try to relog in 15 minutes')
                 sleep(15*60)
@@ -103,6 +107,8 @@ class NMBot():
                 if self.turn_off:
                     return
 
+                self.errors += 1
+                self.signals.error_signal.emit(self.errors, self.browser)
                 self.bot.get('https://www.ninjamanager.com/world')
 
                 if 'Error' in self.bot.title:

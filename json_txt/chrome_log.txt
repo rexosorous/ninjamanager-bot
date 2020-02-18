@@ -1,19 +1,79 @@
-04:53   starting bot ...
-04:53   navigating to ninjamanager.com ...
-04:53   logging in ...
-04:53   login successful
-04:53   all checks successful
-04:53   starting main loop ...
-04:54   
+05:15   starting bot ...
+05:15   navigating to website ...
+05:15   logging in ...
+05:15   login successful
+05:15   all checks successful
+05:16   starting main loop ...
+05:16   
+
+
+
+
+
+
+05:16   Arena Energy = 6
+05:16   World Energy = 89
+05:17   LOOP #0
+
+05:17   starting arena challenges ...
+05:17   no challenges
+05:17   finished arena challenges
+
+05:30   starting world missions ...
+05:31   world won
+05:31      failed to get item Dojutsu Catalyst
+05:31   finished world missions
+05:49   
+
+
+
+
+
+
+05:49   Arena Energy = 9
+05:49   World Energy = 85
+05:50   LOOP #1
+
+05:50   starting arena challenges ...
+05:50      challenged team #101
+05:50      challenged team #11042
+05:50   RAN OUT OF ARENA ENERGY
+05:50   finished arena challenges
+
+06:07   starting world missions ...
+06:08   world won
+06:08      failed to get item Dojutsu Catalyst
+06:09   finished world missions
+06:26   
+
+
+
+
+
+
+06:26   Arena Energy = 5
+06:26   World Energy = 82
+06:26   LOOP #2
+
+06:26   starting arena challenges ...
+06:26      challenged team #365
+06:26   RAN OUT OF ARENA ENERGY
+06:26   finished arena challenges
+
+06:43   starting world missions ...
+06:44   world won
+06:44      failed to get item Dojutsu Catalyst
+06:44   finished world missions
+06:47   
 
 
 closing bot ...
 
-04:54   STATS
-Total Loops:   0
-Gold Gained:   0
-Arena Battles: 0
-World Wins:    0
+06:47   STATS
+Total Loops:   3
+Gold Gained:   23
+Arena Battles: 3
+World Wins:    3
 World Losses:  0
 Items Gained:
 
