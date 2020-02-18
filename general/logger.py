@@ -1,4 +1,5 @@
 import os
+from time import strftime
 
 class Logger():
     def __init__(self, browser: str, signals):
@@ -11,6 +12,7 @@ class Logger():
 
     def log(self, msg: str):
         # prints to gui log and log.txt
+        msg = strftime("%I:%M   ") + msg
         self.logger_file.write(msg + '\n')
         self.signals.log_signal.emit(self.browser, msg)
 

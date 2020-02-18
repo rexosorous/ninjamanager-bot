@@ -37,7 +37,7 @@ class NMBot():
     def startup(self) -> webdriver:
         # navigate to site
         self.logger.log('starting bot ...')
-        self.logger.log('navigating to ninjamanager.com ...')
+        self.logger.log('navigating to website ...')
         self.bot.get('https://www.ninjamanager.com')
         self.slp(5, 10)
 
