@@ -56,6 +56,7 @@ class NMBot():
             self.stats['ninjas'] = self.check_ninjas()
         self.signals.info_signal.emit()
         self.signals.error_signal.emit(self.errors, self.browser)
+        self.signals.item_signal.emit(self.check_items(), self.browser)
 
 
 
@@ -90,6 +91,7 @@ class NMBot():
                             self.slp(10, 30)
                         self.logger.log('finished world missions')
                         self.check_gold()
+                        self.signals.item_signal.emit(self.check_items(), self.browser)
                         self.signals.ninja_signal.emit(self.check_ninjas(), self.browser)
                     else:
                         self.logger.log('WORLD out of energy')
@@ -334,6 +336,23 @@ class NMBot():
         self.slp(10, 20)
         return ninja_stats
 
+
+
+    def check_items(self) -> dict:
+        # returns a dict with the items we have in forge
+        self.bot.get('https://www.ninjamanager.com/forge')
+        self.slp(5, 10)
+
+        items = {}
+        item_table = self.bot.find_element_by_id('material-list')
+        for item in item_table.find_elements_by_xpath('./div'):
+            info = item.find_element_by_xpath('./div').find_elements_by_xpath('./div') # for some reason finding by xpath directly isn't working
+            name = info[1].text
+            amount = info[2].text
+            items[name] = amount
+
+        self.slp(10, 20)
+        return items
 
 
 

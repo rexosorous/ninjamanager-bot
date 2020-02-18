@@ -5,6 +5,7 @@ class Signals(QObject):
     info_signal = pyqtSignal()
     log_signal = pyqtSignal(str, str)
     ninja_signal = pyqtSignal(dict, str)
+    item_signal = pyqtSignal(dict, str)
     options_signal = pyqtSignal(dict)
     area_signal = pyqtSignal(dict)
     recipe_signal = pyqtSignal(str, str, int)

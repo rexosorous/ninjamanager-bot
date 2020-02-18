@@ -183,6 +183,9 @@
          <property name="horizontalScrollBarPolicy">
           <enum>Qt::ScrollBarAlwaysOff</enum>
          </property>
+         <property name="columnCount">
+          <number>3</number>
+         </property>
          <column>
           <property name="text">
            <string>Item</string>
@@ -190,7 +193,12 @@
          </column>
          <column>
           <property name="text">
-           <string>Amount</string>
+           <string>Need</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Have</string>
           </property>
          </column>
         </widget>
@@ -1262,6 +1270,9 @@
          <property name="horizontalScrollBarPolicy">
           <enum>Qt::ScrollBarAlwaysOff</enum>
          </property>
+         <property name="columnCount">
+          <number>3</number>
+         </property>
          <column>
           <property name="text">
            <string>Item</string>
@@ -1269,7 +1280,12 @@
          </column>
          <column>
           <property name="text">
-           <string>Amount</string>
+           <string>Need</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Have</string>
           </property>
          </column>
         </widget>

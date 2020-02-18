@@ -27,6 +27,7 @@ class MainWindow:
 
         # variables created
         self.browsers = {}
+        self.items = {}
 
         # init
         self.connect_events()
@@ -58,6 +59,7 @@ class MainWindow:
         self.signals.log_signal.connect(self.main_log)
         self.signals.info_signal.connect(self.update_info)
         self.signals.ninja_signal.connect(self.update_ninjas)
+        self.signals.item_signal.connect(self.receive_items)
         self.signals.options_signal.connect(self.update_options)
         self.signals.pin_signal.connect(self.pin_recipe)
         self.signals.options_msg_signal.connect(self.log)
@@ -83,10 +85,12 @@ class MainWindow:
         self.contents.chrome_ninjas.setColumnWidth(2, 75)
         self.contents.firefox_ninjas.setColumnWidth(2, 75)
 
-        self.contents.chrome_recipe.setColumnWidth(0, 190)
-        self.contents.firefox_recipe.setColumnWidth(0, 190)
-        self.contents.chrome_recipe.setColumnWidth(1, 75)
-        self.contents.firefox_recipe.setColumnWidth(1, 75)
+        self.contents.chrome_recipe.setColumnWidth(0, 170)
+        self.contents.firefox_recipe.setColumnWidth(0, 170)
+        self.contents.chrome_recipe.setColumnWidth(1, 50)
+        self.contents.firefox_recipe.setColumnWidth(1, 50)
+        self.contents.chrome_recipe.setColumnWidth(2, 50)
+        self.contents.firefox_recipe.setColumnWidth(2, 50)
 
         self.contents.chrome_locations.setColumnWidth(0, 190)
         self.contents.firefox_locations.setColumnWidth(0, 190)
@@ -255,6 +259,32 @@ class MainWindow:
 
 
 
+    def receive_items(self, data: dict, browser: str):
+        # updates the self.items variable
+        self.items[browser] = data
+        self.update_items(browser)
+
+
+
+    def update_items(self, browser: str):
+        # updates the 'owned' portion of the item helper gui
+        gui_picker = {
+            'chrome': self.contents.chrome_recipe,
+            'firefox': self.contents.firefox_recipe
+        }
+
+        top = gui_picker[browser].topLevelItem(0)
+        for row_num in range(top.childCount()):
+            row = top.child(row_num)
+            try:
+                row.setText(2, str(self.items[browser][row.text(0)]))
+            except IndexError:
+                # this is normal behavior
+                # the forge may not have the items we're looking for
+                row.setText(2, '0')
+
+
+
     def update_options(self, data: dict):
         # updates the world mission and cooldown
         for browser in self.browsers:
@@ -285,6 +315,9 @@ class MainWindow:
         # add the basic items
         for item in data['items']:
             gui_picker[browser]['items'].addItem(item)
+
+        # update the new table with items we own
+        self.update_items(browser)
 
 
 
