@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QApplication
+from PyQt5 import QtCore
 from sys import exit
 import traceback
 import os
@@ -26,7 +27,9 @@ TO DO
 class GUI():
     def __init__(self, loggers, stats, signals, db):
         # pyqt definitions
+        os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
         self.app = QApplication([])
+        self.app.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
 
         # variables received
         self.loggers = loggers
