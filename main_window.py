@@ -278,7 +278,7 @@ class MainWindow:
             row = top.child(row_num)
             try:
                 row.setText(2, str(self.items[browser][row.text(0)]))
-            except IndexError:
+            except KeyError:
                 # this is normal behavior
                 # the forge may not have the items we're looking for
                 row.setText(2, '0')
