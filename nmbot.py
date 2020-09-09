@@ -4,9 +4,71 @@ from random import uniform
 from time import sleep
 import traceback
 
+# all the imports needed to overwrite a selenium function
+from selenium.webdriver.common import service
+import errno
+import os
+import platform
+import subprocess
+from subprocess import PIPE
+import time
+from selenium.common.exceptions import WebDriverException
+
 # my modules
 import general.utilities as util
 from general.exceptions import *
+
+
+
+def HiddenConsoleStart(self):
+    """
+    When using selenium in a program that does not have a command line window (ie. when compiled to an exe),
+    starting any webdriver will open a command line window for that driver.
+    To circumvent this without editing selenium's source code, we overwrite one of the functions in selenium.webdriver.common.service.Service
+    This is only a temporary fix. If this section of the source code is changed with any future selenium updates, this fix becomes obsolete.
+    But selenium hasn't been updated in like 2 years, so I'm okay with this.
+    """
+    try:
+        cmd = [self.path]
+        cmd.extend(self.command_line_args())
+        self.process = subprocess.Popen(cmd, env=self.env,
+                                        close_fds=platform.system() != 'Windows',
+                                        stdout=PIPE,
+                                        stderr=PIPE,
+                                        stdin=PIPE,
+                                        creationflags=0x08000000) # this last line is the new section which tells our computer to start a process w/o command line
+    except TypeError:
+        raise
+    except OSError as err:
+        if err.errno == errno.ENOENT:
+            raise WebDriverException(
+                "'%s' executable needs to be in PATH. %s" % (
+                    os.path.basename(self.path), self.start_error_message)
+            )
+        elif err.errno == errno.EACCES:
+            raise WebDriverException(
+                "'%s' executable may have wrong permissions. %s" % (
+                    os.path.basename(self.path), self.start_error_message)
+            )
+        else:
+            raise
+    except Exception as e:
+        raise WebDriverException(
+            "The executable %s needs to be available in the path. %s\n%s" %
+            (os.path.basename(self.path), self.start_error_message, str(e)))
+    count = 0
+    while True:
+        self.assert_process_still_running()
+        if self.is_connectable():
+            break
+        count += 1
+        time.sleep(1)
+        if count == 30:
+            raise WebDriverException("Can not connect to the Service %s" % self.path)
+
+
+
+service.Service.start = HiddenConsoleStart
 
 
 
