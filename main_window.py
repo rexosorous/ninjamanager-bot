@@ -343,6 +343,9 @@ class MainWindow:
 
     def change_mission(self, gui_object, browser: str):
         row = gui_object.currentRow()
+        if row == -1: # if nothing is selected
+            return
+
         url = gui_object.item(row, 2).text()
         mission = gui_object.item(row, 3).text()
 
