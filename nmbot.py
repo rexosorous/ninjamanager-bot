@@ -455,7 +455,7 @@ class NMBot():
         items = 'Items Gained:\n'
 
         for item in self.stats['items_gained']:
-            items += str('                ' + item + ': ' + str(self.stats['items_gained'][item]) + '\n')
+            items += str('\t' + item + ': ' + str(self.stats['items_gained'][item]) + '\n')
         self.logger.log(basic + items + '\n\n')
 
         self.bot.quit()

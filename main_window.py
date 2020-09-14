@@ -33,6 +33,8 @@ class MainWindow:
         self.connect_events()
         self.ui_changes()
         self.init_recipe()
+        self.contents.chrome_notes.setText(util.get_options()['chrome']['notes'])
+        self.contents.firefox_notes.setText(util.get_options()['firefox']['notes'])
 
 
 
@@ -47,6 +49,7 @@ class MainWindow:
         self.contents.chrome_stop.clicked.connect(partial(self.stop, 'chrome'))
         self.contents.chrome_items.currentItemChanged.connect(partial(self.display_location, self.contents.chrome_locations))
         self.contents.chrome_world_shortcut.clicked.connect(partial(self.change_mission, self.contents.chrome_locations, 'chrome'))
+        self.contents.chrome_notes.textChanged.connect(partial(self.save_notes, self.contents.chrome_notes, 'chrome'))
 
         # firefox
         self.contents.firefox_item_toggle.clicked.connect(partial(self.toggle_item, self.contents.firefox_item_frame))
@@ -54,6 +57,7 @@ class MainWindow:
         self.contents.firefox_stop.clicked.connect(partial(self.stop, 'firefox'))
         self.contents.firefox_items.currentItemChanged.connect(partial(self.display_location, self.contents.firefox_locations))
         self.contents.firefox_world_shortcut.clicked.connect(partial(self.change_mission, self.contents.firefox_locations, 'firefox'))
+        self.contents.firefox_notes.textChanged.connect(partial(self.save_notes, self.contents.firefox_notes, 'firefox'))
 
         # signals
         self.signals.log_signal.connect(self.main_log)
@@ -356,6 +360,13 @@ class MainWindow:
 
         self.signals.options_signal.emit(data)
         self.log(f'mission changed to {url}/{mission}', browser)
+
+
+
+    def save_notes(self, gui_object, browser: str):
+        data = util.get_options()
+        data[browser]['notes'] = gui_object.toPlainText()
+        util.save_options(data)
 
 
 

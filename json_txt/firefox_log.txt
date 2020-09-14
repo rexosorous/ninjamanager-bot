@@ -1,0 +1,398 @@
+11:20   starting bot ...
+11:20   navigating to website ...
+11:20   logging in ...
+11:20   login successful
+11:20   all checks successful
+11:20   initializing data ...
+11:20   initializing gold ...
+11:20   initializing ninja exp ...
+11:20   initializing crafting items ...
+11:21   initializations complete
+11:21   starting main loop ...
+11:21   
+
+
+
+
+
+
+11:21   Arena Energy = 116
+11:21   World Energy = 115
+11:22   LOOP #0
+
+11:22   starting arena challenges ...
+11:22      challenged team #11679
+11:22      challenged team #12444
+11:22      challenged team #10598
+11:22      challenged team #4289
+11:22      challenged team #967
+11:23      challenged team #13270
+11:23   finished arena challenges
+
+11:36   starting world missions ...
+11:37   world won
+11:38   world won
+11:38   finished world missions
+11:58   
+
+
+
+
+
+
+11:58   Arena Energy = 100
+11:58   World Energy = 97
+11:58   LOOP #1
+
+11:58   starting arena challenges ...
+11:58      challenged team #13450
+11:59      could not challenge team #12444. reached max challenges
+11:59      challenged team #10598
+11:59      challenged team #4289
+11:59      challenged team #967
+11:59   finished arena challenges
+
+12:12   starting world missions ...
+12:13   world won
+12:14   world won
+12:14   finished world missions
+12:30   
+
+
+
+
+
+
+12:30   Arena Energy = 90
+12:30   World Energy = 91
+12:30   LOOP #2
+
+12:30   starting arena challenges ...
+12:31      challenged team #8449
+12:31      challenged team #13450
+12:31      could not challenge team #12444. reached max challenges
+12:31   finished arena challenges
+
+12:44   starting world missions ...
+12:45   world won
+12:46   world won
+12:46   finished world missions
+01:07   
+
+
+
+
+
+
+01:07   Arena Energy = 90
+01:07   World Energy = 87
+01:07   LOOP #3
+
+01:07   starting arena challenges ...
+01:07      challenged team #8449
+01:07      could not challenge team #12444. reached max challenges
+01:08      challenged team #12071
+01:08   finished arena challenges
+
+01:25   starting world missions ...
+01:25   world won
+01:27   world won
+01:27   finished world missions
+01:46   
+
+
+
+
+
+
+01:46   Arena Energy = 90
+01:46   World Energy = 83
+01:46   LOOP #4
+
+01:46   starting arena challenges ...
+01:47      challenged team #13269
+01:47      could not challenge team #1399. reached max challenges
+01:47      could not challenge team #11934. reached max challenges
+01:47      challenged team #5864
+01:47      challenged team #719
+01:47      challenged team #12071
+01:47      could not challenge team #12444. reached max challenges
+01:47   finished arena challenges
+
+02:02   starting world missions ...
+02:03   world lost
+02:04   world won
+02:05   finished world missions
+02:19   
+
+
+
+
+
+
+02:19   Arena Energy = 80
+02:19   World Energy = 77
+02:19   LOOP #5
+
+02:19   starting arena challenges ...
+02:19      challenged team #13269
+02:19      could not challenge team #1399. reached max challenges
+02:19      could not challenge team #11934. reached max challenges
+02:20      challenged team #5864
+02:20      challenged team #719
+02:20      could not challenge team #12444. reached max challenges
+02:20   finished arena challenges
+
+02:39   starting world missions ...
+02:40   world won
+02:41   world won
+02:42   finished world missions
+02:57   
+
+
+
+
+
+
+02:57   Arena Energy = 76
+02:57   World Energy = 73
+02:57   LOOP #6
+
+02:57   starting arena challenges ...
+02:57      challenged team #33
+02:57      challenged team #13424
+02:58      could not challenge team #11934. reached max challenges
+02:58      could not challenge team #1399. reached max challenges
+02:58   finished arena challenges
+
+03:12   starting world missions ...
+03:13   world lost
+03:14   world won
+03:14   finished world missions
+03:30   
+
+
+
+
+
+
+03:30   Arena Energy = 74
+03:30   World Energy = 69
+03:30   LOOP #7
+
+03:30   starting arena challenges ...
+03:30      challenged team #33
+03:30      challenged team #13424
+03:31      could not challenge team #11934. reached max challenges
+03:31      could not challenge team #1399. reached max challenges
+03:31   finished arena challenges
+
+03:50   starting world missions ...
+03:51   world won
+03:52   world won
+03:53   finished world missions
+04:08   
+
+
+
+
+
+
+04:08   Arena Energy = 74
+04:08   World Energy = 63
+04:08   LOOP #8
+
+04:08   starting arena challenges ...
+04:08      challenged team #13359
+04:08      could not challenge team #11934. reached max challenges
+04:08      could not challenge team #1399. reached max challenges
+04:08   finished arena challenges
+
+04:26   starting world missions ...
+04:27   world lost
+04:28   world won
+04:29   finished world missions
+04:49   
+
+
+
+
+
+
+04:49   Arena Energy = 78
+04:49   World Energy = 59
+04:49   LOOP #9
+
+04:49   starting arena challenges ...
+04:49      challenged team #181
+04:49      challenged team #13121
+04:50      challenged team #13447
+04:50      challenged team #13359
+04:50   finished arena challenges
+
+05:08   starting world missions ...
+05:08   world won
+05:09   world won
+05:10   finished world missions
+05:27   
+
+
+
+
+
+
+05:27   Arena Energy = 70
+05:27   World Energy = 55
+05:27   LOOP #10
+
+05:27   starting arena challenges ...
+05:27      challenged team #181
+05:27      challenged team #13121
+05:27      challenged team #13447
+05:27   finished arena challenges
+
+05:42   starting world missions ...
+05:42   world won
+05:44   world lost
+05:44   finished world missions
+05:59   
+
+
+
+
+
+
+05:59   Arena Energy = 64
+05:59   World Energy = 49
+05:59   LOOP #11
+
+05:59   starting arena challenges ...
+05:59      challenged team #13160
+06:00      challenged team #13057
+06:00   finished arena challenges
+
+06:12   starting world missions ...
+06:13   world won
+06:14   world won
+06:15   finished world missions
+06:34   
+
+
+
+
+
+
+06:34   Arena Energy = 62
+06:34   World Energy = 45
+06:34   LOOP #12
+
+06:34   starting arena challenges ...
+06:34      could not challenge team #11934. reached max challenges
+06:34      challenged team #13160
+06:34      challenged team #13057
+06:34   finished arena challenges
+
+06:50   starting world missions ...
+06:50   world won
+06:52   world won
+06:52   finished world missions
+07:10   
+
+
+
+
+
+
+07:10   Arena Energy = 62
+07:10   World Energy = 41
+07:11   LOOP #13
+
+07:11   starting arena challenges ...
+07:11      could not challenge team #11934. reached max challenges
+07:11   finished arena challenges
+
+07:24   starting world missions ...
+07:25   world won
+07:26   world won
+07:26   finished world missions
+07:44   
+
+
+
+
+
+
+07:44   Arena Energy = 68
+07:44   World Energy = 35
+07:44   LOOP #14
+
+07:44   starting arena challenges ...
+07:45      challenged team #63
+07:45      could not challenge team #11934. reached max challenges
+07:45   finished arena challenges
+
+08:05   starting world missions ...
+08:06   world won
+08:07   world won
+08:07   finished world missions
+08:21   
+
+
+
+
+
+
+08:21   Arena Energy = 44
+08:21   World Energy = 31
+08:22   LOOP #15
+
+08:22   starting arena challenges ...
+08:22      challenged team #13413
+08:22      challenged team #5864
+08:22      could not challenge team #11934. reached max challenges
+08:22      challenged team #13424
+08:22   finished arena challenges
+
+08:35   starting world missions ...
+08:36   world won
+08:37   world won
+08:37   finished world missions
+08:55   
+
+
+
+
+
+
+08:55   Arena Energy = 40
+08:55   World Energy = 25
+08:56   LOOP #16
+
+08:56   starting arena challenges ...
+08:56      challenged team #13413
+08:56      challenged team #5864
+08:56      challenged team #489
+08:56      challenged team #13359
+08:56      challenged team #12409
+08:56      could not challenge team #11934. reached max challenges
+08:56   finished arena challenges
+
+09:14   starting world missions ...
+09:15   world won
+09:16   world won
+09:17   finished world missions
+09:20   
+
+
+closing bot ...
+
+09:20   STATS
+Total Loops:   17
+Gold Gained:   292
+Arena Battles: 46
+World Wins:    30
+World Losses:  4
+Items Gained:
+
+
+

@@ -1,0 +1,352 @@
+11:19   starting bot ...
+11:19   navigating to website ...
+11:19   logging in ...
+11:20   login successful
+11:20   all checks successful
+11:20   initializing data ...
+11:20   initializing gold ...
+11:20   initializing ninja exp ...
+11:20   initializing crafting items ...
+11:21   initializations complete
+11:21   starting main loop ...
+11:21   
+
+
+
+
+
+
+11:21   Arena Energy = 62
+11:21   World Energy = 64
+11:22   LOOP #0
+
+11:22   starting arena challenges ...
+11:22      challenged team #3029
+11:22      challenged team #280
+11:22      could not challenge team #453. reached max challenges
+11:22      challenged team #9502
+11:22      challenged team #743
+11:23      could not challenge team #7437. reached max challenges
+11:23   finished arena challenges
+
+11:40   starting world missions ...
+11:41   world won
+11:41      failed to get item Hashirama's DNA
+11:41   finished world missions
+12:01   
+
+
+
+
+
+
+12:01   Arena Energy = 50
+12:01   World Energy = 61
+12:02   LOOP #1
+
+12:02   starting arena challenges ...
+12:02      challenged team #3029
+12:02      could not challenge team #453. reached max challenges
+12:02      could not challenge team #7437. reached max challenges
+12:02      challenged team #633
+12:03      challenged team #147
+12:03      challenged team #9502
+12:03   finished arena challenges
+
+12:21   starting world missions ...
+12:22   world won
+12:22      failed to get item Hashirama's DNA
+12:23   finished world missions
+12:42   
+
+
+
+
+
+
+12:42   Arena Energy = 38
+12:42   World Energy = 58
+12:43   LOOP #2
+
+12:43   starting arena challenges ...
+12:43      challenged team #124
+12:43      challenged team #147
+12:43      could not challenge team #453. reached max challenges
+12:43      challenged team #743
+12:43      could not challenge team #7437. reached max challenges
+12:43   finished arena challenges
+
+12:59   starting world missions ...
+01:00   world won
+01:00      failed to get item Hashirama's DNA
+01:00   finished world missions
+01:21   
+
+
+
+
+
+
+01:21   Arena Energy = 30
+01:21   World Energy = 55
+01:21   LOOP #3
+
+01:21   starting arena challenges ...
+01:22      challenged team #633
+01:22      challenged team #124
+01:22      could not challenge team #453. reached max challenges
+01:22   finished arena challenges
+
+01:41   starting world missions ...
+01:42   world won
+01:42      failed to get item Hashirama's DNA
+01:43   finished world missions
+02:01   
+
+
+
+
+
+
+02:01   Arena Energy = 26
+02:01   World Energy = 52
+02:01   LOOP #4
+
+02:01   starting arena challenges ...
+02:02      could not challenge team #453. reached max challenges
+02:02   finished arena challenges
+
+02:19   starting world missions ...
+02:20   world won
+02:20      failed to get item Hashirama's DNA
+02:20   finished world missions
+02:39   
+
+
+
+
+
+
+02:39   Arena Energy = 30
+02:39   World Energy = 48
+02:40   LOOP #5
+
+02:40   starting arena challenges ...
+02:40      could not challenge team #453. reached max challenges
+02:40   finished arena challenges
+
+03:00   starting world missions ...
+03:01   world won
+03:01      failed to get item Hashirama's DNA
+03:01   finished world missions
+03:21   
+
+
+
+
+
+
+03:21   Arena Energy = 34
+03:21   World Energy = 46
+03:22   LOOP #6
+
+03:22   starting arena challenges ...
+03:22      could not challenge team #453. reached max challenges
+03:22   finished arena challenges
+
+03:40   starting world missions ...
+03:41   world won
+03:41      failed to get item Hashirama's DNA
+03:41   finished world missions
+04:02   
+
+
+
+
+
+
+04:02   Arena Energy = 38
+04:02   World Energy = 43
+04:03   LOOP #7
+
+04:03   starting arena challenges ...
+04:03      could not challenge team #453. reached max challenges
+04:03   finished arena challenges
+
+04:20   starting world missions ...
+04:21   world won
+04:21      failed to get item Hashirama's DNA
+04:22   finished world missions
+04:41   
+
+
+
+
+
+
+04:41   Arena Energy = 42
+04:41   World Energy = 40
+04:41   LOOP #8
+
+04:41   starting arena challenges ...
+04:41      could not challenge team #453. reached max challenges
+04:41      challenged team #8742
+04:41   finished arena challenges
+
+05:00   starting world missions ...
+05:00   world won
+05:00      failed to get item Hashirama's DNA
+05:01   finished world missions
+05:18   
+
+
+
+
+
+
+05:18   Arena Energy = 42
+05:18   World Energy = 36
+05:19   LOOP #9
+
+05:19   starting arena challenges ...
+05:19      could not challenge team #453. reached max challenges
+05:19      challenged team #8742
+05:19   finished arena challenges
+
+05:37   starting world missions ...
+05:38   world won
+05:38      obtained item Hashirama's DNA
+05:38   finished world missions
+05:56   
+
+
+
+
+
+
+05:56   Arena Energy = 42
+05:56   World Energy = 33
+05:57   LOOP #10
+
+05:57   starting arena challenges ...
+05:57      challenged team #149
+05:57      could not challenge team #453. reached max challenges
+05:57   finished arena challenges
+
+06:17   starting world missions ...
+06:18   world won
+06:18      failed to get item Hashirama's DNA
+06:19   finished world missions
+06:38   
+
+
+
+
+
+
+06:38   Arena Energy = 42
+06:38   World Energy = 30
+06:38   LOOP #11
+
+06:38   starting arena challenges ...
+06:39      could not challenge team #453. reached max challenges
+06:39   finished arena challenges
+
+06:58   starting world missions ...
+06:58   world won
+06:58      failed to get item Hashirama's DNA
+06:59   finished world missions
+07:18   
+
+
+
+
+
+
+07:18   Arena Energy = 46
+07:18   World Energy = 27
+07:18   LOOP #12
+
+07:18   starting arena challenges ...
+07:18      challenged team #384
+07:18      could not challenge team #453. reached max challenges
+07:18   finished arena challenges
+
+07:36   starting world missions ...
+07:37   world won
+07:37      failed to get item Hashirama's DNA
+07:38   finished world missions
+07:56   
+
+
+
+
+
+
+07:56   Arena Energy = 46
+07:56   World Energy = 24
+07:57   LOOP #13
+
+07:57   starting arena challenges ...
+07:57      challenged team #384
+07:57      challenged team #149
+07:57      could not challenge team #453. reached max challenges
+07:57   finished arena challenges
+
+08:15   starting world missions ...
+08:16   world won
+08:16      failed to get item Hashirama's DNA
+08:17   finished world missions
+08:37   
+
+
+
+
+
+
+08:38   Arena Energy = 42
+08:38   World Energy = 21
+08:38   LOOP #14
+
+08:38   starting arena challenges ...
+08:38      could not challenge team #453. reached max challenges
+08:38      challenged team #97
+08:38   finished arena challenges
+
+08:57   starting world missions ...
+08:58   world won
+08:58      failed to get item Hashirama's DNA
+08:58   finished world missions
+09:16   
+
+
+
+
+
+
+09:16   Arena Energy = 42
+09:16   World Energy = 18
+09:16   LOOP #15
+
+09:16   starting arena challenges ...
+09:17      challenged team #280
+09:17      could not challenge team #453. reached max challenges
+09:17      challenged team #97
+09:17   finished arena challenges
+
+09:20   
+
+
+closing bot ...
+
+09:20   STATS
+Total Loops:   15
+Gold Gained:   110
+Arena Battles: 22
+World Wins:    15
+World Losses:  0
+Items Gained:
+                Hashirama's DNA: 1
+
+
+
