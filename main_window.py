@@ -331,6 +331,9 @@ class MainWindow:
         for row in range(gui_object.rowCount()):
             gui_object.removeRow(0)
 
+        if not table_item:      # if a user clicks on a basic item and then tries to pin a different recipe,
+            return              # the program crashes without these two lines
+
         # get data
         item_name = table_item.text()[:table_item.text().find(':')]
         all_locations = self.db.find_locations(item_name)
