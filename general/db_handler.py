@@ -115,7 +115,12 @@ class DBHandler:
             # determine which mission is the best out of all the options
             best_item = {'location':'', 'mission':'', 'chance':0}
             for i in basic:
-                if float(i.chance[:-1]) > best_item['chance']:
+                if i.chance == '???':
+                    if best_item['chance'] == 0:
+                        best_item['location'] = i.location
+                        best_item['mission'] = i.mission
+                        best_item['chance'] = i.chance
+                elif float(i.chance[:-1]) > best_item['chance']:
                     best_item['location'] = i.location
                     best_item['mission'] = i.mission
                     best_item['chance'] = float(i.chance[:-1])
