@@ -216,7 +216,7 @@ class MainWindow:
 
         chrome_items = ''
         for item in self.stats['chrome']['items_gained']:
-            chrome_items += str(item + ': ' + str(self.stats['chrome']['items_gained'][item]))
+            chrome_items += str(item + ': ' + str(self.stats['chrome']['items_gained'][item]) + '\n')
         self.contents.chrome_items_gained.setText(chrome_items)
 
 
@@ -228,7 +228,7 @@ class MainWindow:
 
         firefox_items = ''
         for item in self.stats['firefox']['items_gained']:
-            firefox_items += str(item + ': ' + str(self.stats['firefox']['items_gained'][item]))
+            firefox_items += str(item + ': ' + str(self.stats['firefox']['items_gained'][item]) + '\n')
         self.contents.firefox_items_gained.setText(firefox_items)
 
 
