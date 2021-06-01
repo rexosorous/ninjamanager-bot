@@ -105,6 +105,18 @@ venv.bak/
 
 # custom
 json_txt/accounts.json
+json_txt/chrome_log.txt
+json_txt/firefox_log.txt
+json_txt/summary.txt
+GUI/main.ui
+GUI/options.ui
 geckodriver.log
 releases
 build_debugger.bat
+error
+build.bat
+debug.log
+icon.ico
+items.db-shm
+items.db-wal
+*.exe
